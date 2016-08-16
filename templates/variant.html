@@ -419,8 +419,8 @@
         <hr/>
 
         <div class="row">
-	    <div class="col-md-12">
-	    <div class="section_header">Read Data</div>
+            <div class="col-md-12">
+            <div class="section_header">Read Data</div>
             <p />
             This interactive <a href="https://github.com/igvteam/igv.js">IGV.js</a> visualization shows reads that went into calling this variant.<br>
             {% if read_viz['het']['n_available'] > 0 or read_viz['hom']['n_available'] >0 %}
@@ -487,7 +487,7 @@
 
                 var get_bam_track_config = function(read_viz_data, het_or_hom, i) {
                     return {
-                        type: 'bam',   
+                        type: 'bam',
                         indexed: true,
                         alignmentShading: 'strand',
                         url: '/read_viz/' + read_viz_data[het_or_hom]['urls'][i],
@@ -498,10 +498,10 @@
                         readgroup: read_viz_data[het_or_hom]['readgroups'][i],  //readgroup: '1-157768000-G-C_hom10',
                     };
                 };
- 
+
                 // global igv settings
                 igv.CoverageMap.threshold=0.1;
-                
+
                 // temporary implementation of filtering IGV BamTracks by a user-specified ReadGroup
                 igv.BamReader.prototype.readFeatures_original = igv.BamReader.prototype.readFeatures;
                 igv.BamReader.prototype.readFeatures = function(chr, min, max, continuation, task) {
@@ -551,7 +551,7 @@
                     ["het", "hom"].forEach(function (het_or_hom) {
                         var n = read_viz_data[het_or_hom]['n_available'];
                         for(var i = 0; i < n; i+=1) {
-                            tracks.push(get_bam_track_config(read_viz_data, het_or_hom, i)); 
+                            tracks.push(get_bam_track_config(read_viz_data, het_or_hom, i));
                             tracks_counter[het_or_hom] += 1;
                         }
                     });

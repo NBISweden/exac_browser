@@ -121,9 +121,9 @@ window.get_cnv = function(_cnvs, start, stop, type, filter_status){
     for (var i=0; i<_cnvs.length; i++) {
         if(_cnvs[i].start+1 == start || _cnvs[i].stop+1 == stop){
             if(filter_status)
-		{
-		    accessor = type + '0';
-		}else{
+                {
+                    accessor = type + '0';
+                }else{
                 accessor = type + '60';
             }
             r =  _cnvs[i][accessor];
@@ -137,9 +137,9 @@ window.get_cnv_pop = function(_cnvs, start, stop, type, filter_status){
     for (var i=0; i<_cnvs.length; i++) {
         if(_cnvs[i].start+1 == start || _cnvs[i].stop+1 == stop){
             if(filter_status)
-		{
-		    accessor = type + 'pop0';
-		}else{
+                {
+                    accessor = type + 'pop0';
+                }else{
                 accessor = type + 'pop60';
             }
             r =  _cnvs[i][accessor];
@@ -151,14 +151,14 @@ window.get_cnv_pop = function(_cnvs, start, stop, type, filter_status){
 window.get_max_cnv = function(_cnvs, filter_status){
     var r = 0;
     for (var i=0; i<_cnvs.length; i++) {
-	if(filter_status){
-	    var m = Math.max(_cnvs[i].del0, _cnvs[i].dup0);
-	}else{
-	    var m = Math.max(_cnvs[i].del60, _cnvs[i].dup60);
-	}
-	if( m > r){
-	        r = m
-		    }
+        if(filter_status){
+            var m = Math.max(_cnvs[i].del0, _cnvs[i].dup0);
+        }else{
+            var m = Math.max(_cnvs[i].del60, _cnvs[i].dup60);
+        }
+        if( m > r){
+                r = m
+                    }
     }
     return r;
 };

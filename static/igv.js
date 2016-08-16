@@ -5531,7 +5531,7 @@ var cursor = (function (cursor) {
                 } else {
                     myself.browser.update();
                 }
-                
+
             }
 
             myself.updateRegionDisplay();
@@ -8624,26 +8624,26 @@ var igv = (function (igv) {
         // check if type is redline or diff
         //console.log("AneuFeatureSource:  filename="+thefilename+", config="+JSON.stringify(config));
         // need function to cut off last part of file and add redline or diff file
-     
-        var getPath = function(urlorfile) {            
+
+        var getPath = function(urlorfile) {
             var last = urlorfile.lastIndexOf("/");
             var path = urlorfile.substring(0, last+1);
            // console.log("Getting path of file or url "+urlorfile+"="+path);
             return path;
         }
-     
+
         if (config.localFile) {
-            
+
             var path = getPath(config.localFile.name);
             this.localFile = config.localFile;
             this.filename =path + thefilename;
           //  console.log("Got localfile: "+JSON.stringify(config)+", this.filename="+this.filename);
         }
         else {
-            
+
             var path = getPath(config.url);
-            
-            this.url =path + thefilename;         
+
+            this.url =path + thefilename;
             this.filename = thefilename;
             this.headURL = config.headURL || this.filename;
          //   console.log("Got URL: "+config.url+"-> url="+this.url);
@@ -8685,9 +8685,9 @@ var igv = (function (igv) {
           //  console.log("getFeatures: calling loadFeatures");
             this.loadFeatures(function (featureList) {
                   //  console.log("Creating featureCache with "+featureList.length+ " features");
-                    myself.featureCache = new igv.FeatureCache(featureList);   // Note - replacing previous cache with new one                    
+                    myself.featureCache = new igv.FeatureCache(featureList);   // Note - replacing previous cache with new one
                     // Finally pass features for query interval to continuation
-                    
+
                     var features = myself.featureCache.queryFeatures(chr, bpStart, bpEnd);
                   //  console.log("calling success "+success);
                   //  console.log("features from queryCache "+features);
@@ -8734,7 +8734,7 @@ var igv = (function (igv) {
      *
      * @param success
      * @param task
-     * @param range -- genomic range to load. 
+     * @param range -- genomic range to load.
      */
     igv.AneuFeatureSource.prototype.loadFeatures = function (success, task, range) {
 
@@ -8764,9 +8764,9 @@ var igv = (function (igv) {
         else {
             //console.log("Loading URL "+myself.url);
             igvxhr.loadString(myself.url, options);
-        }        
-        
-       
+        }
+
+
         function getContentLength(continuation) {
             if (myself.contentLength) {
                 continuation(myself.contentLength);
@@ -9056,7 +9056,7 @@ var igv = (function (igv) {
         ctx = options.context;
         pixelWidth = options.pixelWidth;
         pixelHeight = options.pixelHeight;
-//	
+//
         var max = 4;
         var min = 0;
 
@@ -18012,7 +18012,7 @@ var igv = (function (igv) {
                             nr = 0;
                             for (chr in chromosomes) {
                                 var guichrom = igv.guichromosomes[nr];
-                                //if (nr > 1) break;                       
+                                //if (nr > 1) break;
                                 nr++;
                                 if (guichrom && guichrom.size) {
                                     loadfeatures(source, chr, 0, guichrom.size, guichrom, bufferCtx, tracknr);
@@ -18190,7 +18190,7 @@ var igv = (function (igv) {
         }
 
         function loadfeatures(source, chr, start, end, guichrom, bufferCtx, tracknr) {
-            //log("=== loadfeatures of chr " + chr + ", x=" + guichrom.x);            
+            //log("=== loadfeatures of chr " + chr + ", x=" + guichrom.x);
 
             source.getSummary(chr, start, end, function (featureList) {
                 if (featureList) {
@@ -22009,7 +22009,7 @@ var igv = (function (igv) {
 (igv || {});
 /* -*- mode: javascript; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 
-// 
+//
 // Javascript ZLib
 // By Thomas Down 2010-2011
 //
@@ -22256,10 +22256,10 @@ function ZStream() {
 
 ZStream.prototype.inflateInit = function(w, nowrap) {
     if (!w) {
-	w = DEF_WBITS;
+        w = DEF_WBITS;
     }
     if (nowrap) {
-	nowrap = false;
+        nowrap = false;
     }
     this.istate = new Inflate();
     return this.istate.inflateInit(this, nowrap?-w:w);
@@ -22340,12 +22340,12 @@ ZStream.prototype.inflateSetDictionary = function(dictionary, dictLength){
        dstate.pending_buf.length<(dstate.pending_out+len) ||
        next_out.length<(next_out_index+len)){
       System.out.println(dstate.pending_buf.length+", "+dstate.pending_out+
-			 ", "+next_out.length+", "+next_out_index+", "+len);
+                         ", "+next_out.length+", "+next_out_index+", "+len);
       System.out.println("avail_out="+avail_out);
     }
 
     System.arraycopy(dstate.pending_buf, dstate.pending_out,
-		     next_out, next_out_index, len);
+                     next_out, next_out_index, len);
 
     next_out_index+=len;
     dstate.pending_out+=len;
@@ -22399,7 +22399,7 @@ function Inflate() {
 
 Inflate.prototype.inflateReset = function(z) {
     if(z == null || z.istate == null) return Z_STREAM_ERROR;
-    
+
     z.total_in = z.total_out = 0;
     z.msg = null;
     z.istate.mode = z.istate.nowrap!=0 ? BLOCKS : METHOD;
@@ -22432,9 +22432,9 @@ Inflate.prototype.inflateInit = function(z, w){
     }
     this.wbits=w;
 
-    z.istate.blocks=new InfBlocks(z, 
-				  z.istate.nowrap!=0 ? null : this,
-				  1<<w);
+    z.istate.blocks=new InfBlocks(z,
+                                  z.istate.nowrap!=0 ? null : this,
+                                  1<<w);
 
     // reset state
     this.inflateReset(z);
@@ -22690,24 +22690,24 @@ function InfBlocks(z, checkfn, w) {
     this.mode = IB_TYPE;
     this.reset(z, null);
 
-    this.left = 0;            // if STORED, bytes left to copy 
+    this.left = 0;            // if STORED, bytes left to copy
 
-    this.table = 0;           // table lengths (14 bits) 
-    this.index = 0;           // index into blens (or border) 
-    this.blens = null;         // bit lengths of codes 
-    this.bb=new Int32Array(1); // bit length tree depth 
-    this.tb=new Int32Array(1); // bit length decoding tree 
+    this.table = 0;           // table lengths (14 bits)
+    this.index = 0;           // index into blens (or border)
+    this.blens = null;         // bit lengths of codes
+    this.bb=new Int32Array(1); // bit length tree depth
+    this.tb=new Int32Array(1); // bit length decoding tree
 
     this.codes = new InfCodes();
 
-    this.last = 0;            // true if this block is the last block 
+    this.last = 0;            // true if this block is the last block
 
-  // mode independent information 
-    this.bitk = 0;            // bits in bit buffer 
-    this.bitb = 0;            // bit buffer 
-    this.read = 0;            // window read pointer 
-    this.write = 0;           // window write pointer 
-    this.check = 0;          // check on output 
+  // mode independent information
+    this.bitk = 0;            // bits in bit buffer
+    this.bitb = 0;            // bit buffer
+    this.read = 0;            // window read pointer
+    this.write = 0;           // window write pointer
+    this.check = 0;          // check on output
 
     this.inftree=new InfTree();
 }
@@ -22747,26 +22747,26 @@ InfBlocks.prototype.reset = function(z, c){
       switch (this.mode){
       case IB_TYPE:
 
-	while(k<(3)){
-	  if(n!=0){
-	    r=Z_OK;
-	  }
-	  else{
-	    this.bitb=b; this.bitk=k; 
-	    z.avail_in=n;
-	    z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    this.write=q;
-	    return this.inflate_flush(z,r);
-	  };
-	  n--;
-	  b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
-	t = (b & 7);
-	this.last = t & 1;
+        while(k<(3)){
+          if(n!=0){
+            r=Z_OK;
+          }
+          else{
+            this.bitb=b; this.bitk=k;
+            z.avail_in=n;
+            z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            this.write=q;
+            return this.inflate_flush(z,r);
+          };
+          n--;
+          b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
+        t = (b & 7);
+        this.last = t & 1;
 
-	switch (t >>> 1){
-        case 0:                         // stored 
+        switch (t >>> 1){
+        case 0:                         // stored
           {b>>>=(3);k-=(3);}
           t = k & 7;                    // go to byte boundary
 
@@ -22776,11 +22776,11 @@ InfBlocks.prototype.reset = function(z, c){
         case 1:                         // fixed
           {
               var bl=new Int32Array(1);
-	      var bd=new Int32Array(1);
+              var bd=new Int32Array(1);
               var tl=[];
-	      var td=[];
+              var td=[];
 
-	      inflate_trees_fixed(bl, bd, tl, td, z);
+              inflate_trees_fixed(bl, bd, tl, td, z);
               this.codes.init(bl[0], bd[0], tl[0], 0, td[0], 0, z);
           }
 
@@ -22801,340 +22801,340 @@ InfBlocks.prototype.reset = function(z, c){
           z.msg = "invalid block type";
           r = Z_DATA_ERROR;
 
-	  this.bitb=b; this.bitk=k; 
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  this.write=q;
-	  return this.inflate_flush(z,r);
-	}
-	break;
+          this.bitb=b; this.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          this.write=q;
+          return this.inflate_flush(z,r);
+        }
+        break;
       case IB_LENS:
-	while(k<(32)){
-	  if(n!=0){
-	    r=Z_OK;
-	  }
-	  else{
-	    this.bitb=b; this.bitk=k; 
-	    z.avail_in=n;
-	    z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    this.write=q;
-	    return this.inflate_flush(z,r);
-	  };
-	  n--;
-	  b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+        while(k<(32)){
+          if(n!=0){
+            r=Z_OK;
+          }
+          else{
+            this.bitb=b; this.bitk=k;
+            z.avail_in=n;
+            z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            this.write=q;
+            return this.inflate_flush(z,r);
+          };
+          n--;
+          b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	if ((((~b) >>> 16) & 0xffff) != (b & 0xffff)){
-	  this.mode = BAD;
-	  z.msg = "invalid stored block lengths";
-	  r = Z_DATA_ERROR;
+        if ((((~b) >>> 16) & 0xffff) != (b & 0xffff)){
+          this.mode = BAD;
+          z.msg = "invalid stored block lengths";
+          r = Z_DATA_ERROR;
 
-	  this.bitb=b; this.bitk=k; 
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  this.write=q;
-	  return this.inflate_flush(z,r);
-	}
-	this.left = (b & 0xffff);
-	b = k = 0;                       // dump bits
-	this.mode = left!=0 ? IB_STORED : (this.last!=0 ? IB_DRY : IB_TYPE);
-	break;
+          this.bitb=b; this.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          this.write=q;
+          return this.inflate_flush(z,r);
+        }
+        this.left = (b & 0xffff);
+        b = k = 0;                       // dump bits
+        this.mode = left!=0 ? IB_STORED : (this.last!=0 ? IB_DRY : IB_TYPE);
+        break;
       case IB_STORED:
-	if (n == 0){
-	  this.bitb=b; this.bitk=k; 
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  write=q;
-	  return this.inflate_flush(z,r);
-	}
+        if (n == 0){
+          this.bitb=b; this.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          write=q;
+          return this.inflate_flush(z,r);
+        }
 
-	if(m==0){
-	  if(q==end&&read!=0){
-	    q=0; m=(q<this.read ? this.read-q-1 : this.end-q);
-	  }
-	  if(m==0){
-	    this.write=q; 
-	    r=this.inflate_flush(z,r);
-	    q=this.write; m = (q < this.read ? this.read-q-1 : this.end-q);
-	    if(q==this.end && this.read != 0){
-	      q=0; m = (q < this.read ? this.read-q-1 : this.end-q);
-	    }
-	    if(m==0){
-	      this.bitb=b; this.bitk=k; 
-	      z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      this.write=q;
-	      return this.inflate_flush(z,r);
-	    }
-	  }
-	}
-	r=Z_OK;
+        if(m==0){
+          if(q==end&&read!=0){
+            q=0; m=(q<this.read ? this.read-q-1 : this.end-q);
+          }
+          if(m==0){
+            this.write=q;
+            r=this.inflate_flush(z,r);
+            q=this.write; m = (q < this.read ? this.read-q-1 : this.end-q);
+            if(q==this.end && this.read != 0){
+              q=0; m = (q < this.read ? this.read-q-1 : this.end-q);
+            }
+            if(m==0){
+              this.bitb=b; this.bitk=k;
+              z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              this.write=q;
+              return this.inflate_flush(z,r);
+            }
+          }
+        }
+        r=Z_OK;
 
-	t = this.left;
-	if(t>n) t = n;
-	if(t>m) t = m;
-	arrayCopy(z.next_in, p, window, q, t);
-	p += t;  n -= t;
-	q += t;  m -= t;
-	if ((this.left -= t) != 0)
-	  break;
-	this.mode = (this.last != 0 ? IB_DRY : IB_TYPE);
-	break;
+        t = this.left;
+        if(t>n) t = n;
+        if(t>m) t = m;
+        arrayCopy(z.next_in, p, window, q, t);
+        p += t;  n -= t;
+        q += t;  m -= t;
+        if ((this.left -= t) != 0)
+          break;
+        this.mode = (this.last != 0 ? IB_DRY : IB_TYPE);
+        break;
       case IB_TABLE:
 
-	while(k<(14)){
-	  if(n!=0){
-	    r=Z_OK;
-	  }
-	  else{
-	    this.bitb=b; this.bitk=k; 
-	    z.avail_in=n;
-	    z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    this.write=q;
-	    return this.inflate_flush(z,r);
-	  };
-	  n--;
-	  b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+        while(k<(14)){
+          if(n!=0){
+            r=Z_OK;
+          }
+          else{
+            this.bitb=b; this.bitk=k;
+            z.avail_in=n;
+            z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            this.write=q;
+            return this.inflate_flush(z,r);
+          };
+          n--;
+          b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	this.table = t = (b & 0x3fff);
-	if ((t & 0x1f) > 29 || ((t >> 5) & 0x1f) > 29)
-	  {
-	    this.mode = IB_BAD;
-	    z.msg = "too many length or distance symbols";
-	    r = Z_DATA_ERROR;
+        this.table = t = (b & 0x3fff);
+        if ((t & 0x1f) > 29 || ((t >> 5) & 0x1f) > 29)
+          {
+            this.mode = IB_BAD;
+            z.msg = "too many length or distance symbols";
+            r = Z_DATA_ERROR;
 
-	    this.bitb=b; this.bitk=k; 
-	    z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    this.write=q;
-	    return this.inflate_flush(z,r);
-	  }
-	t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
-	if(this.blens==null || this.blens.length<t){
-	    this.blens=new Int32Array(t);
-	}
-	else{
-	  for(var i=0; i<t; i++){
+            this.bitb=b; this.bitk=k;
+            z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            this.write=q;
+            return this.inflate_flush(z,r);
+          }
+        t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
+        if(this.blens==null || this.blens.length<t){
+            this.blens=new Int32Array(t);
+        }
+        else{
+          for(var i=0; i<t; i++){
               this.blens[i]=0;
           }
-	}
+        }
 
-	{b>>>=(14);k-=(14);}
+        {b>>>=(14);k-=(14);}
 
-	this.index = 0;
-	mode = IB_BTREE;
+        this.index = 0;
+        mode = IB_BTREE;
       case IB_BTREE:
-	while (this.index < 4 + (this.table >>> 10)){
-	  while(k<(3)){
-	    if(n!=0){
-	      r=Z_OK;
-	    }
-	    else{
-	      this.bitb=b; this.bitk=k; 
-	      z.avail_in=n;
-	      z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      this.write=q;
-	      return this.inflate_flush(z,r);
-	    };
-	    n--;
-	    b|=(z.next_in[p++]&0xff)<<k;
-	    k+=8;
-	  }
+        while (this.index < 4 + (this.table >>> 10)){
+          while(k<(3)){
+            if(n!=0){
+              r=Z_OK;
+            }
+            else{
+              this.bitb=b; this.bitk=k;
+              z.avail_in=n;
+              z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              this.write=q;
+              return this.inflate_flush(z,r);
+            };
+            n--;
+            b|=(z.next_in[p++]&0xff)<<k;
+            k+=8;
+          }
 
-	  this.blens[INFBLOCKS_BORDER[this.index++]] = b&7;
+          this.blens[INFBLOCKS_BORDER[this.index++]] = b&7;
 
-	  {b>>>=(3);k-=(3);}
-	}
+          {b>>>=(3);k-=(3);}
+        }
 
-	while(this.index < 19){
-	  this.blens[INFBLOCKS_BORDER[this.index++]] = 0;
-	}
+        while(this.index < 19){
+          this.blens[INFBLOCKS_BORDER[this.index++]] = 0;
+        }
 
-	this.bb[0] = 7;
-	t = this.inftree.inflate_trees_bits(this.blens, this.bb, this.tb, this.hufts, z);
-	if (t != Z_OK){
-	  r = t;
-	  if (r == Z_DATA_ERROR){
-	    this.blens=null;
-	    this.mode = IB_BAD;
-	  }
+        this.bb[0] = 7;
+        t = this.inftree.inflate_trees_bits(this.blens, this.bb, this.tb, this.hufts, z);
+        if (t != Z_OK){
+          r = t;
+          if (r == Z_DATA_ERROR){
+            this.blens=null;
+            this.mode = IB_BAD;
+          }
 
-	  this.bitb=b; this.bitk=k; 
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  write=q;
-	  return this.inflate_flush(z,r);
-	}
+          this.bitb=b; this.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          write=q;
+          return this.inflate_flush(z,r);
+        }
 
-	this.index = 0;
-	this.mode = IB_DTREE;
+        this.index = 0;
+        this.mode = IB_DTREE;
       case IB_DTREE:
-	while (true){
-	  t = this.table;
-	  if(!(this.index < 258 + (t & 0x1f) + ((t >> 5) & 0x1f))){
-	    break;
-	  }
+        while (true){
+          t = this.table;
+          if(!(this.index < 258 + (t & 0x1f) + ((t >> 5) & 0x1f))){
+            break;
+          }
 
-	  var h; //int[]
-	  var i, j, c;
+          var h; //int[]
+          var i, j, c;
 
-	  t = this.bb[0];
+          t = this.bb[0];
 
-	  while(k<(t)){
-	    if(n!=0){
-	      r=Z_OK;
-	    }
-	    else{
-	      this.bitb=b; this.bitk=k; 
-	      z.avail_in=n;
-	      z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      this.write=q;
-	      return this.inflate_flush(z,r);
-	    };
-	    n--;
-	    b|=(z.next_in[p++]&0xff)<<k;
-	    k+=8;
-	  }
+          while(k<(t)){
+            if(n!=0){
+              r=Z_OK;
+            }
+            else{
+              this.bitb=b; this.bitk=k;
+              z.avail_in=n;
+              z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              this.write=q;
+              return this.inflate_flush(z,r);
+            };
+            n--;
+            b|=(z.next_in[p++]&0xff)<<k;
+            k+=8;
+          }
 
 //	  if (this.tb[0]==-1){
 //            dlog("null...");
 //	  }
 
-	  t=this.hufts[(this.tb[0]+(b & inflate_mask[t]))*3+1];
-	  c=this.hufts[(this.tb[0]+(b & inflate_mask[t]))*3+2];
+          t=this.hufts[(this.tb[0]+(b & inflate_mask[t]))*3+1];
+          c=this.hufts[(this.tb[0]+(b & inflate_mask[t]))*3+2];
 
-	  if (c < 16){
-	    b>>>=(t);k-=(t);
-	    this.blens[this.index++] = c;
-	  }
-	  else { // c == 16..18
-	    i = c == 18 ? 7 : c - 14;
-	    j = c == 18 ? 11 : 3;
+          if (c < 16){
+            b>>>=(t);k-=(t);
+            this.blens[this.index++] = c;
+          }
+          else { // c == 16..18
+            i = c == 18 ? 7 : c - 14;
+            j = c == 18 ? 11 : 3;
 
-	    while(k<(t+i)){
-	      if(n!=0){
-		r=Z_OK;
-	      }
-	      else{
-		this.bitb=b; this.bitk=k; 
-		z.avail_in=n;
-		z.total_in+=p-z.next_in_index;z.next_in_index=p;
-		this.write=q;
-		return this.inflate_flush(z,r);
-	      };
-	      n--;
-	      b|=(z.next_in[p++]&0xff)<<k;
-	      k+=8;
-	    }
+            while(k<(t+i)){
+              if(n!=0){
+                r=Z_OK;
+              }
+              else{
+                this.bitb=b; this.bitk=k;
+                z.avail_in=n;
+                z.total_in+=p-z.next_in_index;z.next_in_index=p;
+                this.write=q;
+                return this.inflate_flush(z,r);
+              };
+              n--;
+              b|=(z.next_in[p++]&0xff)<<k;
+              k+=8;
+            }
 
-	    b>>>=(t);k-=(t);
+            b>>>=(t);k-=(t);
 
-	    j += (b & inflate_mask[i]);
+            j += (b & inflate_mask[i]);
 
-	    b>>>=(i);k-=(i);
+            b>>>=(i);k-=(i);
 
-	    i = this.index;
-	    t = this.table;
-	    if (i + j > 258 + (t & 0x1f) + ((t >> 5) & 0x1f) ||
-		(c == 16 && i < 1)){
-	      this.blens=null;
-	      this.mode = IB_BAD;
-	      z.msg = "invalid bit length repeat";
-	      r = Z_DATA_ERROR;
+            i = this.index;
+            t = this.table;
+            if (i + j > 258 + (t & 0x1f) + ((t >> 5) & 0x1f) ||
+                (c == 16 && i < 1)){
+              this.blens=null;
+              this.mode = IB_BAD;
+              z.msg = "invalid bit length repeat";
+              r = Z_DATA_ERROR;
 
-	      this.bitb=b; this.bitk=k; 
-	      z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      this.write=q;
-	      return this.inflate_flush(z,r);
-	    }
+              this.bitb=b; this.bitk=k;
+              z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              this.write=q;
+              return this.inflate_flush(z,r);
+            }
 
-	    c = c == 16 ? this.blens[i-1] : 0;
-	    do{
-	      this.blens[i++] = c;
-	    }
-	    while (--j!=0);
-	    this.index = i;
-	  }
-	}
+            c = c == 16 ? this.blens[i-1] : 0;
+            do{
+              this.blens[i++] = c;
+            }
+            while (--j!=0);
+            this.index = i;
+          }
+        }
 
-	this.tb[0]=-1;
-	{
-	    var bl=new Int32Array(1);
-	    var bd=new Int32Array(1);
-	    var tl=new Int32Array(1);
-	    var td=new Int32Array(1);
-	    bl[0] = 9;         // must be <= 9 for lookahead assumptions
-	    bd[0] = 6;         // must be <= 9 for lookahead assumptions
+        this.tb[0]=-1;
+        {
+            var bl=new Int32Array(1);
+            var bd=new Int32Array(1);
+            var tl=new Int32Array(1);
+            var td=new Int32Array(1);
+            bl[0] = 9;         // must be <= 9 for lookahead assumptions
+            bd[0] = 6;         // must be <= 9 for lookahead assumptions
 
-	    t = this.table;
-	    t = this.inftree.inflate_trees_dynamic(257 + (t & 0x1f), 
-					      1 + ((t >> 5) & 0x1f),
-					      this.blens, bl, bd, tl, td, this.hufts, z);
+            t = this.table;
+            t = this.inftree.inflate_trees_dynamic(257 + (t & 0x1f),
+                                              1 + ((t >> 5) & 0x1f),
+                                              this.blens, bl, bd, tl, td, this.hufts, z);
 
-	    if (t != Z_OK){
-	        if (t == Z_DATA_ERROR){
-	            this.blens=null;
-	            this.mode = BAD;
-	        }
-	        r = t;
+            if (t != Z_OK){
+                if (t == Z_DATA_ERROR){
+                    this.blens=null;
+                    this.mode = BAD;
+                }
+                r = t;
 
-	        this.bitb=b; this.bitk=k; 
-	        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	        this.write=q;
-	        return this.inflate_flush(z,r);
-	    }
-	    this.codes.init(bl[0], bd[0], this.hufts, tl[0], this.hufts, td[0], z);
-	}
-	this.mode = IB_CODES;
+                this.bitb=b; this.bitk=k;
+                z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+                this.write=q;
+                return this.inflate_flush(z,r);
+            }
+            this.codes.init(bl[0], bd[0], this.hufts, tl[0], this.hufts, td[0], z);
+        }
+        this.mode = IB_CODES;
       case IB_CODES:
-	this.bitb=b; this.bitk=k;
-	z.avail_in=n; z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	this.write=q;
+        this.bitb=b; this.bitk=k;
+        z.avail_in=n; z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        this.write=q;
 
-	if ((r = this.codes.proc(this, z, r)) != Z_STREAM_END){
-	  return this.inflate_flush(z, r);
-	}
-	r = Z_OK;
-	this.codes.free(z);
+        if ((r = this.codes.proc(this, z, r)) != Z_STREAM_END){
+          return this.inflate_flush(z, r);
+        }
+        r = Z_OK;
+        this.codes.free(z);
 
-	p=z.next_in_index; n=z.avail_in;b=this.bitb;k=this.bitk;
-	q=this.write;m = (q < this.read ? this.read-q-1 : this.end-q);
+        p=z.next_in_index; n=z.avail_in;b=this.bitb;k=this.bitk;
+        q=this.write;m = (q < this.read ? this.read-q-1 : this.end-q);
 
-	if (this.last==0){
-	  this.mode = IB_TYPE;
-	  break;
-	}
-	this.mode = IB_DRY;
+        if (this.last==0){
+          this.mode = IB_TYPE;
+          break;
+        }
+        this.mode = IB_DRY;
       case IB_DRY:
-	this.write=q; 
-	r = this.inflate_flush(z, r); 
-	q=this.write; m = (q < this.read ? this.read-q-1 : this.end-q);
-	if (this.read != this.write){
-	  this.bitb=b; this.bitk=k; 
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  this.write=q;
-	  return this.inflate_flush(z, r);
-	}
-	mode = DONE;
+        this.write=q;
+        r = this.inflate_flush(z, r);
+        q=this.write; m = (q < this.read ? this.read-q-1 : this.end-q);
+        if (this.read != this.write){
+          this.bitb=b; this.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          this.write=q;
+          return this.inflate_flush(z, r);
+        }
+        mode = DONE;
       case IB_DONE:
-	r = Z_STREAM_END;
+        r = Z_STREAM_END;
 
-	this.bitb=b; this.bitk=k; 
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	this.write=q;
-	return this.inflate_flush(z, r);
+        this.bitb=b; this.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        this.write=q;
+        return this.inflate_flush(z, r);
       case IB_BAD:
-	r = Z_DATA_ERROR;
+        r = Z_DATA_ERROR;
 
-	this.bitb=b; this.bitk=k; 
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	this.write=q;
-	return this.inflate_flush(z, r);
+        this.bitb=b; this.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        this.write=q;
+        return this.inflate_flush(z, r);
 
       default:
-	r = Z_STREAM_ERROR;
+        r = Z_STREAM_ERROR;
 
-	this.bitb=b; this.bitk=k; 
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	this.write=q;
-	return this.inflate_flush(z, r);
+        this.bitb=b; this.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        this.write=q;
+        return this.inflate_flush(z, r);
       }
     }
   }
@@ -23151,7 +23151,7 @@ InfBlocks.prototype.set_dictionary = function(d, start, n){
 }
 
   // Returns true if inflate is currently at the end of a block generated
-  // by Z_SYNC_FLUSH or Z_FULL_FLUSH. 
+  // by Z_SYNC_FLUSH or Z_FULL_FLUSH.
 InfBlocks.prototype.sync_point = function(){
     return this.mode == IB_LENS;
 }
@@ -23202,7 +23202,7 @@ InfBlocks.prototype.inflate_flush = function(z, r){
 
       // update check information
       if(this.checkfn != null)
-	z.adler=this.check=z._adler.adler32(this.check, this.window, q, n);
+        z.adler=this.check=z._adler.adler32(this.check, this.window, q, n);
 
       // copy
       arrayCopy(this.window, q, z.next_out, p, n);
@@ -23247,7 +23247,7 @@ InfCodes.prototype.init = function(bl, bd, tl, tl_index, td, td_index, z) {
     this.tree=null;
 }
 
-InfCodes.prototype.proc = function(s, z, r){ 
+InfCodes.prototype.proc = function(s, z, r){
     var j;              // temporary storage
     var t;              // temporary pointer (int[])
     var tindex;         // temporary pointer
@@ -23267,267 +23267,267 @@ InfCodes.prototype.proc = function(s, z, r){
     // process input and output based on current state
     while (true){
       switch (this.mode){
-	// waiting for "i:"=input, "o:"=output, "x:"=nothing
+        // waiting for "i:"=input, "o:"=output, "x:"=nothing
       case IC_START:         // x: set up for LEN
-	if (m >= 258 && n >= 10){
+        if (m >= 258 && n >= 10){
 
-	  s.bitb=b;s.bitk=k;
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  s.write=q;
-	  r = this.inflate_fast(this.lbits, this.dbits, 
-			   this.ltree, this.ltree_index, 
-			   this.dtree, this.dtree_index,
-			   s, z);
+          s.bitb=b;s.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          s.write=q;
+          r = this.inflate_fast(this.lbits, this.dbits,
+                           this.ltree, this.ltree_index,
+                           this.dtree, this.dtree_index,
+                           s, z);
 
-	  p=z.next_in_index;n=z.avail_in;b=s.bitb;k=s.bitk;
-	  q=s.write;m=q<s.read?s.read-q-1:s.end-q;
+          p=z.next_in_index;n=z.avail_in;b=s.bitb;k=s.bitk;
+          q=s.write;m=q<s.read?s.read-q-1:s.end-q;
 
-	  if (r != Z_OK){
-	    this.mode = r == Z_STREAM_END ? IC_WASH : IC_BADCODE;
-	    break;
-	  }
-	}
-	this.need = this.lbits;
-	this.tree = this.ltree;
-	this.tree_index=this.ltree_index;
+          if (r != Z_OK){
+            this.mode = r == Z_STREAM_END ? IC_WASH : IC_BADCODE;
+            break;
+          }
+        }
+        this.need = this.lbits;
+        this.tree = this.ltree;
+        this.tree_index=this.ltree_index;
 
-	this.mode = IC_LEN;
+        this.mode = IC_LEN;
       case IC_LEN:           // i: get length/literal/eob next
-	j = this.need;
+        j = this.need;
 
-	while(k<(j)){
-	  if(n!=0)r=Z_OK;
-	  else{
+        while(k<(j)){
+          if(n!=0)r=Z_OK;
+          else{
 
-	    s.bitb=b;s.bitk=k;
-	    z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    s.write=q;
-	    return s.inflate_flush(z,r);
-	  }
-	  n--;
-	  b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+            s.bitb=b;s.bitk=k;
+            z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            s.write=q;
+            return s.inflate_flush(z,r);
+          }
+          n--;
+          b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	tindex=(this.tree_index+(b&inflate_mask[j]))*3;
+        tindex=(this.tree_index+(b&inflate_mask[j]))*3;
 
-	b>>>=(this.tree[tindex+1]);
-	k-=(this.tree[tindex+1]);
+        b>>>=(this.tree[tindex+1]);
+        k-=(this.tree[tindex+1]);
 
-	e=this.tree[tindex];
+        e=this.tree[tindex];
 
-	if(e == 0){               // literal
-	  this.lit = this.tree[tindex+2];
-	  this.mode = IC_LIT;
-	  break;
-	}
-	if((e & 16)!=0 ){          // length
-	  this.get = e & 15;
-	  this.len = this.tree[tindex+2];
-	  this.mode = IC_LENEXT;
-	  break;
-	}
-	if ((e & 64) == 0){        // next table
-	  this.need = e;
-	  this.tree_index = tindex/3 + this.tree[tindex+2];
-	  break;
-	}
-	if ((e & 32)!=0){               // end of block
-	  this.mode = IC_WASH;
-	  break;
-	}
-	this.mode = IC_BADCODE;        // invalid code
-	z.msg = "invalid literal/length code";
-	r = Z_DATA_ERROR;
+        if(e == 0){               // literal
+          this.lit = this.tree[tindex+2];
+          this.mode = IC_LIT;
+          break;
+        }
+        if((e & 16)!=0 ){          // length
+          this.get = e & 15;
+          this.len = this.tree[tindex+2];
+          this.mode = IC_LENEXT;
+          break;
+        }
+        if ((e & 64) == 0){        // next table
+          this.need = e;
+          this.tree_index = tindex/3 + this.tree[tindex+2];
+          break;
+        }
+        if ((e & 32)!=0){               // end of block
+          this.mode = IC_WASH;
+          break;
+        }
+        this.mode = IC_BADCODE;        // invalid code
+        z.msg = "invalid literal/length code";
+        r = Z_DATA_ERROR;
 
-	s.bitb=b;s.bitk=k;
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	s.write=q;
-	return s.inflate_flush(z,r);
+        s.bitb=b;s.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        s.write=q;
+        return s.inflate_flush(z,r);
 
       case IC_LENEXT:        // i: getting length extra (have base)
-	j = this.get;
+        j = this.get;
 
-	while(k<(j)){
-	  if(n!=0)r=Z_OK;
-	  else{
+        while(k<(j)){
+          if(n!=0)r=Z_OK;
+          else{
 
-	    s.bitb=b;s.bitk=k;
-	    z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    s.write=q;
-	    return s.inflate_flush(z,r);
-	  }
-	  n--; b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+            s.bitb=b;s.bitk=k;
+            z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            s.write=q;
+            return s.inflate_flush(z,r);
+          }
+          n--; b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	this.len += (b & inflate_mask[j]);
+        this.len += (b & inflate_mask[j]);
 
-	b>>=j;
-	k-=j;
+        b>>=j;
+        k-=j;
 
-	this.need = this.dbits;
-	this.tree = this.dtree;
-	this.tree_index = this.dtree_index;
-	this.mode = IC_DIST;
+        this.need = this.dbits;
+        this.tree = this.dtree;
+        this.tree_index = this.dtree_index;
+        this.mode = IC_DIST;
       case IC_DIST:          // i: get distance next
-	j = this.need;
+        j = this.need;
 
-	while(k<(j)){
-	  if(n!=0)r=Z_OK;
-	  else{
+        while(k<(j)){
+          if(n!=0)r=Z_OK;
+          else{
 
-	    s.bitb=b;s.bitk=k;
-	    z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    s.write=q;
-	    return s.inflate_flush(z,r);
-	  }
-	  n--; b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+            s.bitb=b;s.bitk=k;
+            z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            s.write=q;
+            return s.inflate_flush(z,r);
+          }
+          n--; b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	tindex=(this.tree_index+(b & inflate_mask[j]))*3;
+        tindex=(this.tree_index+(b & inflate_mask[j]))*3;
 
-	b>>=this.tree[tindex+1];
-	k-=this.tree[tindex+1];
+        b>>=this.tree[tindex+1];
+        k-=this.tree[tindex+1];
 
-	e = (this.tree[tindex]);
-	if((e & 16)!=0){               // distance
-	  this.get = e & 15;
-	  this.dist = this.tree[tindex+2];
-	  this.mode = IC_DISTEXT;
-	  break;
-	}
-	if ((e & 64) == 0){        // next table
-	  this.need = e;
-	  this.tree_index = tindex/3 + this.tree[tindex+2];
-	  break;
-	}
-	this.mode = IC_BADCODE;        // invalid code
-	z.msg = "invalid distance code";
-	r = Z_DATA_ERROR;
+        e = (this.tree[tindex]);
+        if((e & 16)!=0){               // distance
+          this.get = e & 15;
+          this.dist = this.tree[tindex+2];
+          this.mode = IC_DISTEXT;
+          break;
+        }
+        if ((e & 64) == 0){        // next table
+          this.need = e;
+          this.tree_index = tindex/3 + this.tree[tindex+2];
+          break;
+        }
+        this.mode = IC_BADCODE;        // invalid code
+        z.msg = "invalid distance code";
+        r = Z_DATA_ERROR;
 
-	s.bitb=b;s.bitk=k;
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	s.write=q;
-	return s.inflate_flush(z,r);
+        s.bitb=b;s.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        s.write=q;
+        return s.inflate_flush(z,r);
 
       case IC_DISTEXT:       // i: getting distance extra
-	j = this.get;
+        j = this.get;
 
-	while(k<(j)){
-	  if(n!=0)r=Z_OK;
-	  else{
+        while(k<(j)){
+          if(n!=0)r=Z_OK;
+          else{
 
-	    s.bitb=b;s.bitk=k;
-	    z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	    s.write=q;
-	    return s.inflate_flush(z,r);
-	  }
-	  n--; b|=(z.next_in[p++]&0xff)<<k;
-	  k+=8;
-	}
+            s.bitb=b;s.bitk=k;
+            z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+            s.write=q;
+            return s.inflate_flush(z,r);
+          }
+          n--; b|=(z.next_in[p++]&0xff)<<k;
+          k+=8;
+        }
 
-	this.dist += (b & inflate_mask[j]);
+        this.dist += (b & inflate_mask[j]);
 
-	b>>=j;
-	k-=j;
+        b>>=j;
+        k-=j;
 
-	this.mode = IC_COPY;
+        this.mode = IC_COPY;
       case IC_COPY:          // o: copying bytes in window, waiting for space
         f = q - this.dist;
         while(f < 0){     // modulo window size-"while" instead
           f += s.end;     // of "if" handles invalid distances
-	}
-	while (this.len!=0){
+        }
+        while (this.len!=0){
 
-	  if(m==0){
-	    if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
-	    if(m==0){
-	      s.write=q; r=s.inflate_flush(z,r);
-	      q=s.write;m=q<s.read?s.read-q-1:s.end-q;
+          if(m==0){
+            if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
+            if(m==0){
+              s.write=q; r=s.inflate_flush(z,r);
+              q=s.write;m=q<s.read?s.read-q-1:s.end-q;
 
-	      if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
+              if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
 
-	      if(m==0){
-		s.bitb=b;s.bitk=k;
-		z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-		s.write=q;
-		return s.inflate_flush(z,r);
-	      }  
-	    }
-	  }
+              if(m==0){
+                s.bitb=b;s.bitk=k;
+                z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+                s.write=q;
+                return s.inflate_flush(z,r);
+              }
+            }
+          }
 
-	  s.window[q++]=s.window[f++]; m--;
+          s.window[q++]=s.window[f++]; m--;
 
-	  if (f == s.end)
+          if (f == s.end)
             f = 0;
-	  this.len--;
-	}
-	this.mode = IC_START;
-	break;
+          this.len--;
+        }
+        this.mode = IC_START;
+        break;
       case IC_LIT:           // o: got literal, waiting for output space
-	if(m==0){
-	  if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
-	  if(m==0){
-	    s.write=q; r=s.inflate_flush(z,r);
-	    q=s.write;m=q<s.read?s.read-q-1:s.end-q;
+        if(m==0){
+          if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
+          if(m==0){
+            s.write=q; r=s.inflate_flush(z,r);
+            q=s.write;m=q<s.read?s.read-q-1:s.end-q;
 
-	    if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
-	    if(m==0){
-	      s.bitb=b;s.bitk=k;
-	      z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      s.write=q;
-	      return s.inflate_flush(z,r);
-	    }
-	  }
-	}
-	r=Z_OK;
+            if(q==s.end&&s.read!=0){q=0;m=q<s.read?s.read-q-1:s.end-q;}
+            if(m==0){
+              s.bitb=b;s.bitk=k;
+              z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              s.write=q;
+              return s.inflate_flush(z,r);
+            }
+          }
+        }
+        r=Z_OK;
 
-	s.window[q++]=this.lit; m--;
+        s.window[q++]=this.lit; m--;
 
-	this.mode = IC_START;
-	break;
+        this.mode = IC_START;
+        break;
       case IC_WASH:           // o: got eob, possibly more output
-	if (k > 7){        // return unused byte, if any
-	  k -= 8;
-	  n++;
-	  p--;             // can always return one
-	}
+        if (k > 7){        // return unused byte, if any
+          k -= 8;
+          n++;
+          p--;             // can always return one
+        }
 
-	s.write=q; r=s.inflate_flush(z,r);
-	q=s.write;m=q<s.read?s.read-q-1:s.end-q;
+        s.write=q; r=s.inflate_flush(z,r);
+        q=s.write;m=q<s.read?s.read-q-1:s.end-q;
 
-	if (s.read != s.write){
-	  s.bitb=b;s.bitk=k;
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  s.write=q;
-	  return s.inflate_flush(z,r);
-	}
-	this.mode = IC_END;
+        if (s.read != s.write){
+          s.bitb=b;s.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          s.write=q;
+          return s.inflate_flush(z,r);
+        }
+        this.mode = IC_END;
       case IC_END:
-	r = Z_STREAM_END;
-	s.bitb=b;s.bitk=k;
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	s.write=q;
-	return s.inflate_flush(z,r);
+        r = Z_STREAM_END;
+        s.bitb=b;s.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        s.write=q;
+        return s.inflate_flush(z,r);
 
       case IC_BADCODE:       // x: got error
 
-	r = Z_DATA_ERROR;
+        r = Z_DATA_ERROR;
 
-	s.bitb=b;s.bitk=k;
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	s.write=q;
-	return s.inflate_flush(z,r);
+        s.bitb=b;s.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        s.write=q;
+        return s.inflate_flush(z,r);
 
       default:
-	r = Z_STREAM_ERROR;
+        r = Z_STREAM_ERROR;
 
-	s.bitb=b;s.bitk=k;
-	z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	s.write=q;
-	return s.inflate_flush(z,r);
+        s.bitb=b;s.bitk=k;
+        z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+        s.write=q;
+        return s.inflate_flush(z,r);
       }
     }
   }
@@ -23572,160 +23572,160 @@ InfCodes.prototype.inflate_fast = function(bl, bd, tl, tl_index, td, td_index, s
     do {                          // assume called with m >= 258 && n >= 10
       // get literal/length code
       while(k<(20)){              // max bits for literal/length code
-	n--;
-	b|=(z.next_in[p++]&0xff)<<k;k+=8;
+        n--;
+        b|=(z.next_in[p++]&0xff)<<k;k+=8;
       }
 
       t= b&ml;
-      tp=tl; 
+      tp=tl;
       tp_index=tl_index;
       tp_index_t_3=(tp_index+t)*3;
       if ((e = tp[tp_index_t_3]) == 0){
-	b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
+        b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	s.window[q++] = tp[tp_index_t_3+2];
-	m--;
-	continue;
+        s.window[q++] = tp[tp_index_t_3+2];
+        m--;
+        continue;
       }
       do {
 
-	b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
+        b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	if((e&16)!=0){
-	  e &= 15;
-	  c = tp[tp_index_t_3+2] + (b & inflate_mask[e]);
+        if((e&16)!=0){
+          e &= 15;
+          c = tp[tp_index_t_3+2] + (b & inflate_mask[e]);
 
-	  b>>=e; k-=e;
+          b>>=e; k-=e;
 
-	  // decode distance base of block to copy
-	  while(k<(15)){           // max bits for distance code
-	    n--;
-	    b|=(z.next_in[p++]&0xff)<<k;k+=8;
-	  }
+          // decode distance base of block to copy
+          while(k<(15)){           // max bits for distance code
+            n--;
+            b|=(z.next_in[p++]&0xff)<<k;k+=8;
+          }
 
-	  t= b&md;
-	  tp=td;
-	  tp_index=td_index;
+          t= b&md;
+          tp=td;
+          tp_index=td_index;
           tp_index_t_3=(tp_index+t)*3;
-	  e = tp[tp_index_t_3];
+          e = tp[tp_index_t_3];
 
-	  do {
+          do {
 
-	    b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
+            b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	    if((e&16)!=0){
-	      // get extra bits to add to distance base
-	      e &= 15;
-	      while(k<(e)){         // get extra bits (up to 13)
-		n--;
-		b|=(z.next_in[p++]&0xff)<<k;k+=8;
-	      }
+            if((e&16)!=0){
+              // get extra bits to add to distance base
+              e &= 15;
+              while(k<(e)){         // get extra bits (up to 13)
+                n--;
+                b|=(z.next_in[p++]&0xff)<<k;k+=8;
+              }
 
-	      d = tp[tp_index_t_3+2] + (b&inflate_mask[e]);
+              d = tp[tp_index_t_3+2] + (b&inflate_mask[e]);
 
-	      b>>=(e); k-=(e);
+              b>>=(e); k-=(e);
 
-	      // do the copy
-	      m -= c;
-	      if (q >= d){                // offset before dest
-		//  just copy
-		r=q-d;
-		if(q-r>0 && 2>(q-r)){           
-		  s.window[q++]=s.window[r++]; // minimum count is three,
-		  s.window[q++]=s.window[r++]; // so unroll loop a little
-		  c-=2;
-		}
-		else{
-		  s.window[q++]=s.window[r++]; // minimum count is three,
-		  s.window[q++]=s.window[r++]; // so unroll loop a little
-		  c-=2;
-		}
-	      }
-	      else{                  // else offset after destination
+              // do the copy
+              m -= c;
+              if (q >= d){                // offset before dest
+                //  just copy
+                r=q-d;
+                if(q-r>0 && 2>(q-r)){
+                  s.window[q++]=s.window[r++]; // minimum count is three,
+                  s.window[q++]=s.window[r++]; // so unroll loop a little
+                  c-=2;
+                }
+                else{
+                  s.window[q++]=s.window[r++]; // minimum count is three,
+                  s.window[q++]=s.window[r++]; // so unroll loop a little
+                  c-=2;
+                }
+              }
+              else{                  // else offset after destination
                 r=q-d;
                 do{
                   r+=s.end;          // force pointer in window
                 }while(r<0);         // covers invalid distances
-		e=s.end-r;
-		if(c>e){             // if source crosses,
-		  c-=e;              // wrapped copy
-		  if(q-r>0 && e>(q-r)){           
-		    do{s.window[q++] = s.window[r++];}
-		    while(--e!=0);
-		  }
-		  else{
-		    arrayCopy(s.window, r, s.window, q, e);
-		    q+=e; r+=e; e=0;
-		  }
-		  r = 0;                  // copy rest from start of window
-		}
+                e=s.end-r;
+                if(c>e){             // if source crosses,
+                  c-=e;              // wrapped copy
+                  if(q-r>0 && e>(q-r)){
+                    do{s.window[q++] = s.window[r++];}
+                    while(--e!=0);
+                  }
+                  else{
+                    arrayCopy(s.window, r, s.window, q, e);
+                    q+=e; r+=e; e=0;
+                  }
+                  r = 0;                  // copy rest from start of window
+                }
 
-	      }
+              }
 
-	      // copy all or what's left
+              // copy all or what's left
               do{s.window[q++] = s.window[r++];}
-		while(--c!=0);
-	      break;
-	    }
-	    else if((e&64)==0){
-	      t+=tp[tp_index_t_3+2];
-	      t+=(b&inflate_mask[e]);
-	      tp_index_t_3=(tp_index+t)*3;
-	      e=tp[tp_index_t_3];
-	    }
-	    else{
-	      z.msg = "invalid distance code";
+                while(--c!=0);
+              break;
+            }
+            else if((e&64)==0){
+              t+=tp[tp_index_t_3+2];
+              t+=(b&inflate_mask[e]);
+              tp_index_t_3=(tp_index+t)*3;
+              e=tp[tp_index_t_3];
+            }
+            else{
+              z.msg = "invalid distance code";
 
-	      c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
+              c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
 
-	      s.bitb=b;s.bitk=k;
-	      z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	      s.write=q;
+              s.bitb=b;s.bitk=k;
+              z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+              s.write=q;
 
-	      return Z_DATA_ERROR;
-	    }
-	  }
-	  while(true);
-	  break;
-	}
+              return Z_DATA_ERROR;
+            }
+          }
+          while(true);
+          break;
+        }
 
-	if((e&64)==0){
-	  t+=tp[tp_index_t_3+2];
-	  t+=(b&inflate_mask[e]);
-	  tp_index_t_3=(tp_index+t)*3;
-	  if((e=tp[tp_index_t_3])==0){
+        if((e&64)==0){
+          t+=tp[tp_index_t_3+2];
+          t+=(b&inflate_mask[e]);
+          tp_index_t_3=(tp_index+t)*3;
+          if((e=tp[tp_index_t_3])==0){
 
-	    b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
+            b>>=(tp[tp_index_t_3+1]); k-=(tp[tp_index_t_3+1]);
 
-	    s.window[q++]=tp[tp_index_t_3+2];
-	    m--;
-	    break;
-	  }
-	}
-	else if((e&32)!=0){
+            s.window[q++]=tp[tp_index_t_3+2];
+            m--;
+            break;
+          }
+        }
+        else if((e&32)!=0){
 
-	  c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
- 
-	  s.bitb=b;s.bitk=k;
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  s.write=q;
+          c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
 
-	  return Z_STREAM_END;
-	}
-	else{
-	  z.msg="invalid literal/length code";
+          s.bitb=b;s.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          s.write=q;
 
-	  c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
+          return Z_STREAM_END;
+        }
+        else{
+          z.msg="invalid literal/length code";
 
-	  s.bitb=b;s.bitk=k;
-	  z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
-	  s.write=q;
+          c=z.avail_in-n;c=(k>>3)<c?k>>3:c;n+=c;p-=c;k-=c<<3;
 
-	  return Z_DATA_ERROR;
-	}
-      } 
+          s.bitb=b;s.bitk=k;
+          z.avail_in=n;z.total_in+=p-z.next_in_index;z.next_in_index=p;
+          s.write=q;
+
+          return Z_DATA_ERROR;
+        }
+      }
       while(true);
-    } 
+    }
     while(m>=258 && n>= 10);
 
     // not enough input or output--restore pointers and return
@@ -23843,12 +23843,12 @@ InfTree.prototype.huft_build = function(b, bindex, n, s, d, e, t, m, hp, hn, v) 
     for (; k <= g; k++){
       a = this.c[k];
       while (a--!=0){
-	// here i is the Huffman code of length k bits for value *p
-	// make tables up to required level
+        // here i is the Huffman code of length k bits for value *p
+        // make tables up to required level
         while (k > w + l){
           h++;
           w += l;                 // previous table always l bits
-	  // compute minimum size table less than or equal to l bits
+          // compute minimum size table less than or equal to l bits
           z = g - w;
           z = (z > l) ? l : z;        // table size upper limit
           if((f=1<<(j=k-w))>a+1){     // try a k-w bit table
@@ -23861,19 +23861,19 @@ InfTree.prototype.huft_build = function(b, bindex, n, s, d, e, t, m, hp, hn, v) 
                   break;              // enough codes to use up j bits
                 f -= this.c[xp];           // else deduct codes from patterns
               }
-	    }
+            }
           }
           z = 1 << j;                 // table entries for j-bit table
 
-	  // allocate new table
+          // allocate new table
           if (this.hn[0] + z > MANY){       // (note: doesn't matter for fixed)
             return Z_DATA_ERROR;       // overflow of MANY
           }
           this.u[h] = q = /*hp+*/ this.hn[0];   // DEBUG
           this.hn[0] += z;
- 
-	  // connect to last table, if there is one
-	  if(h!=0){
+
+          // connect to last table, if there is one
+          if(h!=0){
             this.x[h]=i;           // save pattern for backing up
             this.r[0]=j;     // bits in this table
             this.r[1]=l;     // bits to dump before this table
@@ -23883,14 +23883,14 @@ InfTree.prototype.huft_build = function(b, bindex, n, s, d, e, t, m, hp, hn, v) 
           }
           else{
             t[0] = q;               // first table is returned result
-	  }
+          }
         }
 
-	// set up table entry in r
+        // set up table entry in r
         this.r[1] = (k - w);
         if (p >= n){
           this.r[0] = 128 + 64;      // out of values--invalid code
-	}
+        }
         else if (v[p] < s){
           this.r[0] = (this.v[p] < 256 ? 0 : 32 + 64);  // 256 is end-of-block
           this.r[2] = this.v[p++];          // simple code is just the value
@@ -23904,15 +23904,15 @@ InfTree.prototype.huft_build = function(b, bindex, n, s, d, e, t, m, hp, hn, v) 
         f=1<<(k-w);
         for (j=i>>>w;j<z;j+=f){
           arrayCopy(this.r, 0, hp, (q+j)*3, 3);
-	}
+        }
 
-	// backwards increment the k-bit code i
+        // backwards increment the k-bit code i
         for (j = 1 << (k - 1); (i & j)!=0; j >>>= 1){
           i ^= j;
-	}
+        }
         i ^= j;
 
-	// backup over finished tables
+        // backup over finished tables
         mask = (1 << w) - 1;      // needed on HP, cc -O bug
         while ((i & mask) != this.x[h]){
           h--;                    // don't need to update q
@@ -23984,9 +23984,9 @@ InfTree.prototype.inflate_trees_dynamic = function(nl, nd, c, bl, bd, tl, td, hp
   static int inflate_trees_fixed(int[] bl,  //literal desired/actual bit depth
                                  int[] bd,  //distance desired/actual bit depth
                                  int[][] tl,//literal/length tree result
-                                 int[][] td,//distance tree result 
+                                 int[][] td,//distance tree result
                                  ZStream z  //for memory allocation
-				 ){
+                                 ){
 
 */
 
@@ -24007,8 +24007,8 @@ InfTree.prototype.initWorkArea = function(vsize){
         this.u=new Int32Array(BMAX);
         this.x=new Int32Array(BMAX+1);
     }
-    if(this.v.length<vsize){ 
-        this.v=new Int32Array(vsize); 
+    if(this.v.length<vsize){
+        this.v=new Int32Array(vsize);
     }
     for(var i=0; i<vsize; i++){this.v[i]=0;}
     for(var i=0; i<BMAX+1; i++){this.c[i]=0;}
@@ -24026,7 +24026,7 @@ var hasSlice = false; /* (typeof testArray.slice === 'function'); */ // Chrome s
 function arrayCopy(src, srcOffset, dest, destOffset, count) {
     if (count == 0) {
         return;
-    } 
+    }
     if (!src) {
         throw "Undef src";
     } else if (!dest) {
@@ -24036,10 +24036,10 @@ function arrayCopy(src, srcOffset, dest, destOffset, count) {
     if (srcOffset == 0 && count == src.length) {
         arrayCopy_fast(src, dest, destOffset);
     } else if (hasSubarray) {
-        arrayCopy_fast(src.subarray(srcOffset, srcOffset + count), dest, destOffset); 
+        arrayCopy_fast(src.subarray(srcOffset, srcOffset + count), dest, destOffset);
     } else if (src.BYTES_PER_ELEMENT == 1 && count > 100) {
         arrayCopy_fast(new Uint8Array(src.buffer, src.byteOffset + srcOffset, count), dest, destOffset);
-    } else { 
+    } else {
         arrayCopy_slow(src, srcOffset, dest, destOffset, count);
     }
 
@@ -24060,7 +24060,7 @@ function arrayCopy_fast(src, dest, destOffset) {
 
 
   // largest prime smaller than 65536
-var ADLER_BASE=65521; 
+var ADLER_BASE=65521;
   // NMAX is the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
 var ADLER_NMAX=5552;
 

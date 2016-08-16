@@ -74,7 +74,7 @@ var make_cnvs_svg = function(_cnvs, _transcript, scale_type, skip_utrs)
     var cnv_filter_status = $('#filtered_checkbox').is(":checked");
     var m = get_max_cnv(_cnvs, cnv_filter_status);
 
-    
+
 
 
     var svg = d3.select('#gene_plot_container').append("svg")
@@ -767,7 +767,7 @@ $(document).ready(function() {
         $("#cnv_svg").remove();
         var include_utrs = $('#include_utrs_checkbox').is(':checked');
         var detail = get_plot_detail();
-        
+
         make_cnvs_svg(window.cnvs, window.transcript, detail, !include_utrs);
 
     });

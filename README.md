@@ -11,7 +11,7 @@ Installation
 
 ### Getting the code
 
-Create a directory to put all this stuff in. This will serve as the parent directory of the actual exac_browser repository 
+Create a directory to put all this stuff in. This will serve as the parent directory of the actual exac_browser repository
 
     mkdir exac
     cd exac
@@ -22,7 +22,7 @@ First (as this can run in parallel), get the datasets that the browser uses and 
     tar zxvf exac_browser.tar.gz
     cd ..
 
-Now clone the repo: 
+Now clone the repo:
 
     git clone https://github.com/konradjk/exac_browser.git
 
@@ -37,7 +37,7 @@ Install MongoDB:
     # or
     sudo port install mongodb
 
-Create a directory to hold your mongo database files: 
+Create a directory to hold your mongo database files:
 
     mkdir database
 
@@ -112,4 +112,3 @@ And visit on your browser:
 For testing, you can open up an interactive shell with:
 
     python manage.py shell
-
