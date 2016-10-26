@@ -39,6 +39,6 @@ echo "Compressing files (bgzip) and creating indexes (tabix)..."
 for f in "$new_coverage_dir"/Panel.*.coverage; do
     printf "Compressing '%s'...\n" "$f"
     bgzip "$f"
-    printf "Indexing '%s'...\n" "$f"
-    tabix -b 2 -e 2 "$f"
+    printf "Indexing '%s'...\n" "$f.gz"
+    tabix -b 2 -e 2 "$f.gz"
 done
