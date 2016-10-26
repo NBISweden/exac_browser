@@ -22,21 +22,21 @@ fi
 
 printf "Reading from '%s'\n..." "$coverage_dir"
 
-for f in "$coverage_dir"/Panel.*.gz; do
+for f in "$coverage_dir"/Panel.*.txt.gz; do
     printf "Parsing '%s'...\n" "$f"
     zcat "$f" |
     awk -v dir="$new_coverage_dir" '
         /^#/        { next }
         $1 != chr   {
                         chr  = $1;
-                        file = sprintf("%s/Panel.%s.coverage", dir, chr);
+                        file = sprintf("%s/Panel.%s.coverage.txt", dir, chr);
                         printf("Outputting to '%s'\n", file);
                     }
                     { print $0 >> file }'
 done
 
 echo "Compressing files (bgzip) and creating indexes (tabix)..."
-for f in "$new_coverage_dir"/Panel.*.coverage; do
+for f in "$new_coverage_dir"/Panel.*.coverage.txt; do
     printf "Compressing '%s'...\n" "$f"
     bgzip "$f"
     printf "Indexing '%s'...\n" "$f.gz"
