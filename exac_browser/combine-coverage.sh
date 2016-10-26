@@ -35,10 +35,12 @@ for f in "$coverage_dir"/Panel.*.txt.gz; do
                     { print $0 >> file }'
 done
 
-echo "Compressing files (bgzip) and creating indexes (tabix)..."
-for f in "$new_coverage_dir"/Panel.*.coverage.txt; do
-    printf "Compressing '%s'...\n" "$f"
-    bgzip "$f"
-    printf "Indexing '%s'...\n" "$f.gz"
-    tabix -b 2 -e 2 "$f.gz"
-done
+echo "Compressing files (bgzip)..."
+find "$new_coverage_dir" -name "Panel.*.txt" |
+xargs -n 1 -P 6 -t bgzip
+
+echo "Creating indexes (tabix)..."
+find "$new_coverage_dir" -name "Panel.*.txt.gz" |
+xargs -n 1 -P 6 -t tabix -b 2 -e 2 -f
+
+echo "Done."
