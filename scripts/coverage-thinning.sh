@@ -19,11 +19,13 @@ fi
 mkdir coverage-thinned
 echo "Directory 'coverage-thinned' created" >&2
 
+tmpcov="$( mktemp -p ./coverage-thinned )"
+trap 'rm -f "$tmpcov" "$tmpcov".head "$tmpcov".data' EXIT
+
 for cov in coverage/Panel*.gz; do
     printf 'Processing "%s"... ' "$cov" >&2
 
     printf 'unzip... ' >&2
-    tmpcov="$( mktemp -p . )"
     gzip -d -c "$cov" >"$tmpcov"
 
     printf 'filter... ' >&2
@@ -37,5 +39,4 @@ for cov in coverage/Panel*.gz; do
     tabix -f -s 1 -b 2 -e 2 coverage-thinned/"${cov##*/}"
 
     printf 'done.\n' >&2
-    rm -f "$tmpcov" "$tmpcov".head "$tmpcov".data
 done
