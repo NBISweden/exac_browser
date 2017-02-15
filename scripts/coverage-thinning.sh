@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# This script is to be run in the exac_data directory.  It will read
+# the coverage data in the coverage subdirectory, and write a filtered
+# version of the data to files in a new coverage-thinned directory,
+# together with the appropriate Tabix indexes.  The new directory must
+# not already exist.
+#
+# The new coverage data consists of only those bases that occur on a
+# coordinate which is a multiple of 10.
+
 set -e
 
 if [[ ! -d "coverage" ]]; then
