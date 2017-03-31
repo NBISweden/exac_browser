@@ -2,7 +2,7 @@
 {% block body %}
   <script>$('#navbar_form_container').hide();</script>
   <div class="container">
-    <h1 id="home-title">SweGen Variant Frequency Browser</a></h1>
+    <h1 id="home-title">SweGen Variant Frequency Browser (GRCh37/hg19)</h1>
     <div class="row">
       <div class="col-md-12">
         <div id="home-searchbox">
@@ -30,7 +30,16 @@
     <div class="row"
          style="font-size: 16px;">
       <div class="col-md-4">
-          <!-- Old news section removed -->
+          <p>This genome browser displays the variant frequencies
+          obtained for the 1000 individuals the SweGen dataset, using
+          software from the Exome Aggregation Consortium (ExAC).</p>
+
+          <p>Please note that variant frequencies on chrX and Y are not
+          displayed correctly in the current SweGen browser. The SweGen
+          dataset consists sequences from 506 males and 494 females,
+          which implies a total number of 1494 X chromosomes, and 506
+          Y chromosomes in the dataset. The current version displays a
+          total of 2000 both for chrX and chrY.</p>
       </div>
     </div>
   </div>
