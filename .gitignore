@@ -1,9 +1,9 @@
-.DS_Store
-static/.DS_Store
-static/tablesorter-master
-.idea/
 *.pyc
-misc/
+*~
+.DS_Store
 .gitignore
+.idea/
 autocomplete_strings.txt
 gene_cache/
+misc/
+static/tablesorter-master

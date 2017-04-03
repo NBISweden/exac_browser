@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# This script is to be run in the exac_data directory.  It will read
+# the coverage data in the coverage subdirectory, and write a filtered
+# version of the data to files in a new coverage-thinned directory,
+# together with the appropriate Tabix indexes.  The new directory must
+# not already exist.
+#
+# The new coverage data consists of only those bases that occur on a
+# coordinate which is a multiple of 10.
+
 set -e
 
 if [[ ! -d "coverage" ]]; then
@@ -10,11 +19,13 @@ fi
 mkdir coverage-thinned
 echo "Directory 'coverage-thinned' created" >&2
 
+tmpcov="$( mktemp -p ./coverage-thinned )"
+trap 'rm -f "$tmpcov" "$tmpcov".head "$tmpcov".data' EXIT
+
 for cov in coverage/Panel*.gz; do
     printf 'Processing "%s"... ' "$cov" >&2
 
     printf 'unzip... ' >&2
-    tmpcov="$( mktemp -p . )"
     gzip -d -c "$cov" >"$tmpcov"
 
     printf 'filter... ' >&2
@@ -28,5 +39,4 @@ for cov in coverage/Panel*.gz; do
     tabix -f -s 1 -b 2 -e 2 coverage-thinned/"${cov##*/}"
 
     printf 'done.\n' >&2
-    rm -f "$tmpcov" "$tmpcov".head "$tmpcov".data
 done
