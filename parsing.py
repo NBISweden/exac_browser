@@ -14,7 +14,7 @@ POPS = {
     #'NFE': 'European (Non-Finnish)',
     #'SAS': 'South Asian',
     #'OTH': 'Other'
-        'KGA':	'SweGen'
+        'KGA': 'SweGen'
 }
 
 
@@ -63,9 +63,9 @@ def get_variants_from_sites_vcf(sites_vcf):
             if line.startswith('##INFO=<ID=CSQ'):
                 vep_field_names = line.split('Format: ')[-1].strip('">').split('|')
             if line.startswith('##INFO=<ID=DP_HIST'):
-                dp_mids = map(float, line.split('Mids: ')[-1].strip('">').split('|'))
+                dp_mids = list(map(float, line.split('Mids: ')[-1].strip('">').split('|')))
             if line.startswith('##INFO=<ID=GQ_HIST'):
-                gq_mids = map(float, line.split('Mids: ')[-1].strip('">').split('|'))
+                gq_mids = list(map(float, line.split('Mids: ')[-1].strip('">').split('|')))
             if line.startswith('#'):
                 continue
 
@@ -76,11 +76,11 @@ def get_variants_from_sites_vcf(sites_vcf):
             fields = line.split('\t')
 
             if fields[0].startswith('GL') or fields[0].startswith('MT'):
-		continue
+                continue
 
             info_field = dict([(x.split('=', 1)) if '=' in x else (x, x) for x in re.split(';(?=\w)', fields[7])])
             consequence_array = info_field['CSQ'].split(',') if 'CSQ' in info_field else []
-            annotations = [dict(zip(vep_field_names, x.split('|'))) for x in consequence_array if len(vep_field_names) == len(x.split('|'))]
+            annotations = [dict(list(zip(vep_field_names, x.split('|')))) for x in consequence_array if len(vep_field_names) == len(x.split('|'))]
             coding_annotations = annotations
 
             alt_alleles = fields[4].split(',')
@@ -140,10 +140,10 @@ def get_variants_from_sites_vcf(sites_vcf):
 
                 if 'DP_HIST' in info_field:
                     hists_all = [info_field['DP_HIST'].split(',')[0], info_field['DP_HIST'].split(',')[i+1]]
-                    variant['genotype_depths'] = [zip(dp_mids, map(int, x.split('|'))) for x in hists_all]
+                    variant['genotype_depths'] = [list(zip(dp_mids, list(map(int, x.split('|'))))) for x in hists_all]
                 if 'GQ_HIST' in info_field:
                     hists_all = [info_field['GQ_HIST'].split(',')[0], info_field['GQ_HIST'].split(',')[i+1]]
-                    variant['genotype_qualities'] = [zip(gq_mids, map(int, x.split('|'))) for x in hists_all]
+                    variant['genotype_qualities'] = [list(zip(gq_mids, list(map(int, x.split('|'))))) for x in hists_all]
 
                 yield variant
         except Exception:
@@ -155,15 +155,15 @@ def get_variants_from_sites_vcf(sites_vcf):
 def get_mnp_data(mnp_file):
     header = mnp_file.readline().strip().split('\t')
     for line in mnp_file:
-        data = dict(zip(header, line.split('\t')))
-        if any(map(lambda x: x == 'True', data['QUESTIONABLE_PHASING'])): continue
+        data = dict(list(zip(header, line.split('\t'))))
+        if any([x == 'True' for x in data['QUESTIONABLE_PHASING']]): continue
         chroms = data['CHROM'].split(',')
         chrom = chroms[0]
         sites = data['SITES'].split(',')
         refs = data['REF'].split(',')
         alts = data['ALT'].split(',')
         for i, site in enumerate(sites):
-            all_sites = zip(chroms, sites, refs, alts)
+            all_sites = list(zip(chroms, sites, refs, alts))
             all_sites.remove(all_sites[i])
             mnp = {}
             mnp['xpos'] = get_xpos(chrom, site)
@@ -183,7 +183,7 @@ def get_constraint_information(constraint_file):
     header = header.split()
     for line in constraint_file:
         transcript, gene, chrom, info = line.strip().split(None, 3)
-        transcript_info = dict(zip(header, map(float, info.split())))
+        transcript_info = dict(list(zip(header, list(map(float, info.split())))))
         transcript_info['transcript'] = transcript.split('.')[0]
         yield transcript_info
 
@@ -220,7 +220,7 @@ def get_genes_from_gencode_gtf(gtf_file):
         start = int(fields[3]) + 1  # bed files are 0-indexed
         stop = int(fields[4]) + 1
         info = dict(x.strip().split() for x in fields[8].split(';') if x != '')
-        info = {k: v.strip('"') for k, v in info.items()}
+        info = {k: v.strip('"') for k, v in list(info.items())}
         gene_id = info['gene_id'].split('.')[0]
 
         gene = {
@@ -254,7 +254,7 @@ def get_transcripts_from_gencode_gtf(gtf_file):
         start = int(fields[3]) + 1  # bed files are 0-indexed
         stop = int(fields[4]) + 1
         info = dict(x.strip().split() for x in fields[8].split(';') if x != '')
-        info = {k: v.strip('"') for k, v in info.items()}
+        info = {k: v.strip('"') for k, v in list(info.items())}
         transcript_id = info['transcript_id'].split('.')[0]
         gene_id = info['gene_id'].split('.')[0]
 
@@ -289,7 +289,7 @@ def get_exons_from_gencode_gtf(gtf_file):
         start = int(fields[3]) + 1  # bed files are 0-indexed
         stop = int(fields[4]) + 1
         info = dict(x.strip().split() for x in fields[8].split(';') if x != '')
-        info = {k: v.strip('"') for k, v in info.items()}
+        info = {k: v.strip('"') for k, v in list(info.items())}
         transcript_id = info['transcript_id'].split('.')[0]
         gene_id = info['gene_id'].split('.')[0]
 
@@ -312,7 +312,7 @@ def get_cnvs_from_txt(cnv_txt_file):
     Parse gencode txt file;
     Returns iter of gene dicts
     """
-    header = cnv_txt_file.next() # gets rid of the header
+    header = next(cnv_txt_file) # gets rid of the header
     #print header
     for line in cnv_txt_file:
 
@@ -356,7 +356,7 @@ def get_cnvs_from_txt(cnv_txt_file):
 
 
 def get_cnvs_per_gene(cnv_gene_file):
-    header = cnv_gene_file.next() # gets rid of the header
+    header = next(cnv_gene_file) # gets rid of the header
     for line in cnv_gene_file:
 
         fields = line.rsplit()
@@ -398,7 +398,7 @@ def get_dbnsfp_info(dbnsfp_file):
     Returns iter of transcript dicts
     """
     header = dbnsfp_file.next().split('\t')
-    fields = dict(zip(header, range(len(header))))
+    fields = dict(list(zip(header, list(range(len(header))))))
     for line in dbnsfp_file:
         line = line.split('\t')
         other_names = line[fields["Gene_old_names"]].split(';') if line[fields["Gene_old_names"]] != '.' else []

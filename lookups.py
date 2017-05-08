@@ -45,7 +45,7 @@ def get_variants_by_rsid(db, rsid):
         return None
     try:
         int(rsid.lstrip('rs'))
-    except Exception, e:
+    except Exception as e:
         return None
     variants = list(db.variants.find({'rsid': rsid}, fields={'_id': False}))
     add_consequence_to_variants(variants)
@@ -57,7 +57,7 @@ def get_variants_from_dbsnp(db, rsid):
         return None
     try:
         rsid = int(rsid.lstrip('rs'))
-    except Exception, e:
+    except Exception as e:
         return None
     position = db.dbsnp.find_one({'rsid': rsid})
     if position:
@@ -167,7 +167,7 @@ def get_awesomebar_result(db, query):
 
     """
     query = query.strip()
-    print 'Query: %s' % query
+    print('Query: %s' % query)
 
     # Variant
     variant = get_variants_by_rsid(db, query.lower())

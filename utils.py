@@ -134,8 +134,8 @@ def get_protein_hgvs(annotation):
         try:
             amino_acids = ''.join([protein_letters_1to3[x] for x in annotation['Amino_acids']])
             return "p." + amino_acids + annotation['Protein_position'] + amino_acids
-        except Exception, e:
-            print 'Could not create HGVS for: %s' % annotation
+        except Exception as e:
+            print('Could not create HGVS for: %s' % annotation)
     return annotation['HGVSp'].split(':')[-1]
 
 # Note that this is the current as of v81 with some included for backwards compatibility (VEP <= 75)

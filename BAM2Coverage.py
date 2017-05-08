@@ -26,7 +26,7 @@ def count_depth(bam_list, region, out_file):
     cmd += " -r " + region
     cmd += " > " + out_file
 
-    print >> sys.stderr, "##INFO executing: " + cmd
+    print("##INFO executing: " + cmd, file=sys.stderr)
 
     # error handling part might be incomplete
     p = subprocess.Popen(cmd,
@@ -35,8 +35,8 @@ def count_depth(bam_list, region, out_file):
                          stderr=subprocess.PIPE,
                          )
     stdout_data, stderr_data = p.communicate()
-    print stdout_data
-    print >> sys.stderr, stderr_data
+    print(stdout_data)
+    print(stderr_data, file=sys.stderr)
 
 def samtools_depth_to_panel_coverage(depth_file, out_file):
     chrom = np.genfromtxt(depth_file,
@@ -51,7 +51,7 @@ def samtools_depth_to_panel_coverage(depth_file, out_file):
                            delimiter="\t",
                            )[:,2:]
     n_samples = float(depths.shape[1])
-    print >> sys.stderr, "##INFO number of samples: " + str(int(n_samples))
+    print("##INFO number of samples: " + str(int(n_samples)), file=sys.stderr)
     merged_arrays = [chrom,
                      pos,
                      np.mean(depths, axis=1),

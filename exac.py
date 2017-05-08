@@ -203,7 +203,7 @@ def load_constraint_information():
     db = get_db()
 
     db.constraint.drop()
-    print 'Dropped db.constraint.'
+    print('Dropped db.constraint.')
 
     start_time = time.time()
 
@@ -212,7 +212,7 @@ def load_constraint_information():
             db.constraint.insert(transcript, w=0)
 
     db.constraint.ensure_index('transcript')
-    print 'Done loading constraint info. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading constraint info. Took %s seconds' % int(time.time() - start_time))
 
 
 def load_mnps():
@@ -220,10 +220,10 @@ def load_mnps():
     start_time = time.time()
 
     db.variants.ensure_index('has_mnp')
-    print 'Done indexing.'
+    print('Done indexing.')
     while db.variants.find_and_modify({'has_mnp' : True}, {'$unset': {'has_mnp': '', 'mnps': ''}}):
         pass
-    print 'Deleted MNP data.'
+    print('Deleted MNP data.')
 
     with gzip.open(app.config['MNP_FILE']) as mnp_file:
         for mnp in get_mnp_data(mnp_file):
@@ -231,7 +231,7 @@ def load_mnps():
             db.variants.find_and_modify({'_id': variant['_id']}, {'$set': {'has_mnp': True}, '$push': {'mnps': mnp}}, w=0)
 
     db.variants.ensure_index('has_mnp')
-    print 'Done loading MNP info. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading MNP info. Took %s seconds' % int(time.time() - start_time))
 
 
 def load_gene_models():
@@ -240,7 +240,7 @@ def load_gene_models():
     db.genes.drop()
     db.transcripts.drop()
     db.exons.drop()
-    print 'Dropped db.genes, db.transcripts, and db.exons.'
+    print('Dropped db.genes, db.transcripts, and db.exons.')
 
     start_time = time.time()
 
@@ -263,7 +263,7 @@ def load_gene_models():
             other_names = [other_name.upper() for other_name in dbnsfp_gene['gene_other_names']]
             dbnsfp_info[dbnsfp_gene['ensembl_gene']] = (dbnsfp_gene['gene_full_name'], other_names)
 
-    print 'Done loading metadata. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading metadata. Took %s seconds' % int(time.time() - start_time))
 
     # grab genes from GTF
     start_time = time.time()
@@ -280,7 +280,7 @@ def load_gene_models():
                 gene['other_names'] = dbnsfp_info[gene_id][1]
             db.genes.insert(gene, w=0)
 
-    print 'Done loading genes. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading genes. Took %s seconds' % int(time.time() - start_time))
 
     start_time = time.time()
     db.genes.ensure_index('gene_id')
@@ -289,30 +289,30 @@ def load_gene_models():
     db.genes.ensure_index('other_names')
     db.genes.ensure_index('xstart')
     db.genes.ensure_index('xstop')
-    print 'Done indexing gene table. Took %s seconds' % int(time.time() - start_time)
+    print('Done indexing gene table. Took %s seconds' % int(time.time() - start_time))
 
     # and now transcripts
     start_time = time.time()
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
         db.transcripts.insert((transcript for transcript in get_transcripts_from_gencode_gtf(gtf_file)), w=0)
-    print 'Done loading transcripts. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading transcripts. Took %s seconds' % int(time.time() - start_time))
 
     start_time = time.time()
     db.transcripts.ensure_index('transcript_id')
     db.transcripts.ensure_index('gene_id')
-    print 'Done indexing transcript table. Took %s seconds' % int(time.time() - start_time)
+    print('Done indexing transcript table. Took %s seconds' % int(time.time() - start_time))
 
     # Building up gene definitions
     start_time = time.time()
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
         db.exons.insert((exon for exon in get_exons_from_gencode_gtf(gtf_file)), w=0)
-    print 'Done loading exons. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading exons. Took %s seconds' % int(time.time() - start_time))
 
     start_time = time.time()
     db.exons.ensure_index('exon_id')
     db.exons.ensure_index('transcript_id')
     db.exons.ensure_index('gene_id')
-    print 'Done indexing exon table. Took %s seconds' % int(time.time() - start_time)
+    print('Done indexing exon table. Took %s seconds' % int(time.time() - start_time))
 
     return []
 
@@ -321,7 +321,7 @@ def load_cnv_models():
     db = get_db()
 
     db.cnvs.drop()
-    print 'Dropped db.cnvs.'
+    print('Dropped db.cnvs.')
 
     start_time = time.time()
     with open(app.config['CNV_FILE']) as cnv_txt_file:
@@ -330,7 +330,7 @@ def load_cnv_models():
             #progress.update(gtf_file.fileobj.tell())
         #progress.finish()
 
-    print 'Done loading CNVs. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading CNVs. Took %s seconds' % int(time.time() - start_time))
 
 def drop_cnv_genes():
     db = get_db()
@@ -346,7 +346,7 @@ def load_cnv_genes():
             #progress.update(gtf_file.fileobj.tell())
         #progress.finish()
 
-    print 'Done loading CNVs in genes. Took %s seconds' % int(time.time() - start_time)
+    print('Done loading CNVs in genes. Took %s seconds' % int(time.time() - start_time))
 
 
 def load_dbsnp_file():
@@ -370,7 +370,7 @@ def load_dbsnp_file():
     start_time = time.time()
     dbsnp_file = app.config['DBSNP_FILE']
 
-    print "Loading dbsnp from %s" % dbsnp_file
+    print("Loading dbsnp from %s" % dbsnp_file)
     if os.path.isfile(dbsnp_file + ".tbi"):
         num_procs = app.config['LOAD_DB_PARALLEL_PROCESSES']
     else:
@@ -405,7 +405,7 @@ def load_db():
     """
     # Initialize database
     # Don't need to explicitly create tables with mongo, just indices
-    confirm = raw_input('This will drop the database and reload. Are you sure you want to continue? [no] ')
+    confirm = input('This will drop the database and reload. Are you sure you want to continue? [no] ')
     if not confirm.startswith('y'):
         print('Exiting...')
         sys.exit(1)
@@ -449,7 +449,7 @@ def create_cache():
         try:
             page_content = get_gene_page_content(gene_id)
         except Exception as e:
-            print e
+            print(e)
             continue
         f = open(os.path.join(GENE_CACHE_DIR, '{}.html'.format(gene_id)), 'w')
         f.write(page_content)
@@ -459,13 +459,13 @@ def create_cache():
 def precalculate_metrics():
     import numpy
     db = get_db()
-    print 'Reading %s variants...' % db.variants.count()
+    print('Reading %s variants...' % db.variants.count())
     metrics = defaultdict(list)
     binned_metrics = defaultdict(list)
     progress = 0
     start_time = time.time()
     for variant in db.variants.find(fields=['quality_metrics', 'site_quality', 'allele_num', 'allele_count']):
-        for metric, value in variant['quality_metrics'].iteritems():
+        for metric, value in variant['quality_metrics'].items():
             metrics[metric].append(float(value))
         qual = float(variant['site_quality'])
         metrics['site_quality'].append(qual)
@@ -481,13 +481,13 @@ def precalculate_metrics():
                     break
         progress += 1
         if not progress % 100000:
-            print 'Read %s variants. Took %s seconds' % (progress, int(time.time() - start_time))
-    print 'Done reading variants. Dropping metrics database... '
+            print('Read %s variants. Took %s seconds' % (progress, int(time.time() - start_time)))
+    print('Done reading variants. Dropping metrics database... ')
     db.metrics.drop()
-    print 'Dropped metrics database. Calculating metrics...'
+    print('Dropped metrics database. Calculating metrics...')
     for metric in metrics:
         bin_range = None
-        data = map(numpy.log, metrics[metric]) if metric == 'DP' else metrics[metric]
+        data = list(map(numpy.log, metrics[metric])) if metric == 'DP' else metrics[metric]
         if metric == 'FS':
             bin_range = (0, 20)
         elif metric == 'VQSLOD':
@@ -507,7 +507,7 @@ def precalculate_metrics():
             'hist': list(hist[0])
         })
     for metric in binned_metrics:
-        hist = numpy.histogram(map(numpy.log, binned_metrics[metric]), bins=40)
+        hist = numpy.histogram(list(map(numpy.log, binned_metrics[metric])), bins=40)
         edges = hist[1]
         mids = [(edges[i]+edges[i+1])/2 for i in range(len(edges)-1)]
         db.metrics.insert({
@@ -516,7 +516,7 @@ def precalculate_metrics():
             'hist': list(hist[0])
         })
     db.metrics.ensure_index('metric')
-    print 'Done pre-calculating metrics!'
+    print('Done pre-calculating metrics!')
 
 
 def get_db():
@@ -555,7 +555,7 @@ def awesome():
     query = request.args.get('query')
     datatype, identifier = lookups.get_awesomebar_result(db, query)
 
-    print "Searched for %s: %s" % (datatype, identifier)
+    print("Searched for %s: %s" % (datatype, identifier))
     if datatype == 'gene':
         return redirect('/gene/{}'.format(identifier))
     elif datatype == 'transcript':
@@ -619,7 +619,7 @@ def variant_page(variant_str):
             n_hom = read_viz_db.execute("select n_expected_samples, n_available_samples from t "
                 "where chrom=? and pos=? and ref=? and alt=? and het_or_hom=?", (chrom, pos, ref, alt, 'hom')).fetchone()
             read_viz_db.close()
-        except Exception, e:
+        except Exception as e:
             logging.debug("Error when accessing sqlite db: %s - %s", sqlite_db_path, e)
             n_het = n_hom = None
 
@@ -642,7 +642,7 @@ def variant_page(variant_str):
             ]
 
 
-        print 'Rendering variant: %s' % variant_str
+        print('Rendering variant: %s' % variant_str)
         return render_template(
             'variant.html',
             variant=variant,
@@ -653,7 +653,7 @@ def variant_page(variant_str):
             read_viz=read_viz_dict,
         )
     except Exception:
-        print 'Failed on variant:', variant_str, ';Error=', traceback.format_exc()
+        print('Failed on variant:', variant_str, ';Error=', traceback.format_exc())
         abort(404)
 
 
@@ -700,10 +700,10 @@ def get_gene_page_content(gene_id):
                 constraint=constraint_info
             )
             cache.set(cache_key, t, timeout=1000*60)
-        print 'Rendering gene: %s' % gene_id
+        print('Rendering gene: %s' % gene_id)
         return t
-    except Exception, e:
-        print 'Failed on gene:', gene_id, ';Error=', traceback.format_exc()
+    except Exception as e:
+        print('Failed on gene:', gene_id, ';Error=', traceback.format_exc())
         abort(404)
 
 
@@ -742,10 +742,10 @@ def transcript_page(transcript_id):
                 cnvgenes_json=json.dumps(cnvs_per_gene)
             )
             cache.set(cache_key, t, timeout=1000*60)
-        print 'Rendering transcript: %s' % transcript_id
+        print('Rendering transcript: %s' % transcript_id)
         return t
-    except Exception, e:
-        print 'Failed on transcript:', transcript_id, ';Error=', traceback.format_exc()
+    except Exception as e:
+        print('Failed on transcript:', transcript_id, ';Error=', traceback.format_exc())
         abort(404)
 
 
@@ -791,10 +791,10 @@ def region_page(region_id):
                 stop=stop,
                 coverage=coverage_array
             )
-        print 'Rendering region: %s' % region_id
+        print('Rendering region: %s' % region_id)
         return t
-    except Exception, e:
-        print 'Failed on region:', region_id, ';Error=', traceback.format_exc()
+    except Exception as e:
+        print('Failed on region:', region_id, ';Error=', traceback.format_exc())
         abort(404)
 
 
@@ -806,7 +806,7 @@ def dbsnp_page(rsid):
         chrom = None
         start = None
         stop = None
-        print 'Rendering rsid: %s' % rsid
+        print('Rendering rsid: %s' % rsid)
         return render_template(
             'region.html',
             rsid=rsid,
@@ -817,8 +817,8 @@ def dbsnp_page(rsid):
             coverage=None,
             genes_in_region=None
         )
-    except Exception, e:
-        print 'Failed on rsid:', rsid, ';Error=', traceback.format_exc()
+    except Exception as e:
+        print('Failed on rsid:', rsid, ';Error=', traceback.format_exc())
         abort(404)
 
 
