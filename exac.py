@@ -40,7 +40,7 @@ app.config['COMPRESS_DEBUG'] = True
 cache = SimpleCache()
 
 EXAC_FILES_DIRECTORY = 'exac_data/'
-MONGO_SETTINGS_FILE = '../secrets.json'
+MONGO_SETTINGS_FILE = '../settings.json'
 MONGO_SETTINGS = json.load( open( MONGO_SETTINGS_FILE ) )
 
 REGION_LIMIT = 1E5
