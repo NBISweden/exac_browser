@@ -49,7 +49,7 @@ EXON_PADDING = 50
 app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],
     DB_PORT=MONGO_SETTINGS['mongoPort'],
-    DB_NAME=MONGO_SETTINGS['mongoDb'],
+    DB_NAME=MONGO_SETTINGS['mongoDb-' + os.environ['FLASK_PORT']],
     DB_USER=MONGO_SETTINGS['mongoUser'],
     DB_PASS=MONGO_SETTINGS['mongoPassword'],
     DEBUG=True,
