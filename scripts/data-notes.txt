@@ -12,7 +12,6 @@ zcat dbSNP.bcp.gz | mawk 'length($3) > 0 { gsub(/ +/, "\t"); print }' |
 sort --parallel=8 -S 256M -k2,2 -k3,3n | bgzip -c >dbSNP.txt.bgz
 tabix -s 2 -b 3 -e 3 dbSNP.txt.bgz
 
-
 # dbNSFP v3.5a GRCh38 (.p2?)
 curl -O ftp://dbnsfp:dbnsfp@dbnsfp.softgenetics.com/dbNSFPv3.5a.zip
 
