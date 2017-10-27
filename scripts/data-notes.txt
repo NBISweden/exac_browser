@@ -15,7 +15,8 @@ tabix -s 2 -b 3 -e 3 dbSNP.txt.bgz
 # dbNSFP v3.5a GRCh38 (.p2?)
 curl -O ftp://dbnsfp:dbnsfp@dbnsfp.softgenetics.com/dbNSFPv3.5a.zip
 unzip dbNSFPv3.5a.zip dbNSFP3.5_gene
-ln -sf dbNSFP3.5_gene dbNSFP_gene
+gzip -9 dbNSFP3.5_gene
+ln -sf dbNSFP3.5_gene.gz dbNSFP_gene.gz
 
 # Ensembl canonical transcripts (Ensembl 90, GRCh38.p10)
 mysql -BN -h ensembldb.ensembl.org -u anonymous -D homo_sapiens_core_90_38 \
