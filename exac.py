@@ -60,7 +60,7 @@ app.config.update(dict(
     CANONICAL_TRANSCRIPT_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'canonical_transcripts.txt.gz'),
     OMIM_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'omim_info.txt.gz'),
     BASE_COVERAGE_FILES=glob.glob(os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'coverage', 'Panel.*.coverage.txt.gz')),
-    DBNSFP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbNSFP2.6_gene.gz'),
+    DBNSFP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbNSFP_gene.gz'),
     CONSTRAINT_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'forweb_cleaned_exac_r03_march16_z_data_pLI_CNV-final.txt.gz'),
     MNP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'MNPs_NotFiltered_ForBrowserRelease.txt.gz'),
     CNV_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'exac-gencode-exon.cnt.final.pop3'),
