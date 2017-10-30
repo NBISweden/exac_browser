@@ -22,5 +22,5 @@ ln -sf dbNSFP3.5_gene.gz dbNSFP_gene.gz
 mysql -BN -h ensembldb.ensembl.org -u anonymous -D homo_sapiens_core_90_38 \
     -e 'SELECT g.stable_id, t.stable_id FROM gene g JOIN transcript t
         ON (g.canonical_transcript_id = t.transcript_id)' |
-sort | gzip -9v >canonical_transcripts_ensembl_90_GRCh38.gz
+sort | gzip -9 >canonical_transcripts_ensembl_90_GRCh38.gz
 ln -sf canonical_transcript_ensembl_90_GRCh38.gz canonical_transcripts.txt.gz
