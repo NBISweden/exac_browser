@@ -40,7 +40,7 @@ app.config['COMPRESS_DEBUG'] = True
 cache = SimpleCache()
 
 EXAC_FILES_DIRECTORY = 'exac_data/'
-MONGO_SETTINGS_FILE = '../settings.json'
+MONGO_SETTINGS_FILE = 'settings.json'
 MONGO_SETTINGS = json.load( open( MONGO_SETTINGS_FILE ) )
 
 REGION_LIMIT = 1E5
@@ -49,18 +49,18 @@ EXON_PADDING = 50
 app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],
     DB_PORT=MONGO_SETTINGS['mongoPort'],
-    DB_NAME=MONGO_SETTINGS['mongoDb'],
+    DB_NAME=MONGO_SETTINGS['mongoDb-' + os.environ['FLASK_PORT']],
     DB_USER=MONGO_SETTINGS['mongoUser'],
     DB_PASS=MONGO_SETTINGS['mongoPassword'],
     DEBUG=True,
     SECRET_KEY='development key',
     LOAD_DB_PARALLEL_PROCESSES = 4,  # contigs assigned to threads, so good to make this a factor of 24 (eg. 2,3,4,6,8)
-    SITES_VCFS=glob.glob(os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'swegen.*vcf.gz')),
+    SITES_VCFS=glob.glob(os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'variations.*vcf.gz')),
     GENCODE_GTF=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'gencode.gtf.gz'),
     CANONICAL_TRANSCRIPT_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'canonical_transcripts.txt.gz'),
     OMIM_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'omim_info.txt.gz'),
     BASE_COVERAGE_FILES=glob.glob(os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'coverage', 'Panel.*.coverage.txt.gz')),
-    DBNSFP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbNSFP2.6_gene.gz'),
+    DBNSFP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbNSFP_gene.gz'),
     CONSTRAINT_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'forweb_cleaned_exac_r03_march16_z_data_pLI_CNV-final.txt.gz'),
     MNP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'MNPs_NotFiltered_ForBrowserRelease.txt.gz'),
     CNV_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'exac-gencode-exon.cnt.final.pop3'),
@@ -70,7 +70,7 @@ app.config.update(dict(
     #   wget ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b142_GRCh37p13/database/organism_data/b142_SNPChrPosOnRef_105.bcp.gz
     #   zcat b142_SNPChrPosOnRef_105.bcp.gz | awk '$3 != ""' | perl -pi -e 's/ +/\t/g' | sort -k2,2 -k3,3n | bgzip -c > dbsnp142.txt.bgz
     #   tabix -s 2 -b 3 -e 3 dbsnp142.txt.bgz
-    DBSNP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbsnp142.txt.bgz'),
+    DBSNP_FILE=os.path.join(os.path.dirname(__file__), EXAC_FILES_DIRECTORY, 'dbSNP.txt.bgz'),
 
     READ_VIZ_DIR="/mongo/readviz"
 ))
