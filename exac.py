@@ -525,14 +525,21 @@ def precalculate_metrics():
     print 'Done pre-calculating metrics!'
 
 
-def get_db():
+def get_db(use_shared_data=False):
     """
     Opens a new database connection if there is none yet for the
     current application context.
     """
-    if not hasattr(g, 'db_conn'):
-        g.db_conn = connect_db()
-    return g.db_conn
+    if use_shared_data:
+        if not hasattr(g, 'db_conn_shared'):
+            g.db_conn_shared = connect_db(use_shared_data)
+        conn = g.db_conn_shared
+    else:
+        if not hasattr(g, 'db_conn'):
+            g.db_conn = connect_db(use_shared_data)
+        conn = g.db_conn
+
+    return conn
 
 
 # @app.teardown_appcontext
