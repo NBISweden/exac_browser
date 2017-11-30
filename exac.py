@@ -50,6 +50,7 @@ app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],
     DB_PORT=MONGO_SETTINGS['mongoPort'],
     DB_NAME=MONGO_SETTINGS['mongoDb-' + os.environ['FLASK_PORT']],
+    DB_SHARED_NAME=MONGO_SETTINGS['mongoDb'],
     DB_USER=MONGO_SETTINGS['mongoUser'],
     DB_PASS=MONGO_SETTINGS['mongoPassword'],
     DEBUG=True,
@@ -78,12 +79,17 @@ app.config.update(dict(
 GENE_CACHE_DIR = os.path.join(os.path.dirname(__file__), 'gene_cache')
 GENES_TO_CACHE = {l.strip('\n') for l in open(os.path.join(os.path.dirname(__file__), 'genes_to_cache.txt'))}
 
-def connect_db():
+def connect_db(use_shared_data=False):
     """
     Connects to the specific database.
     """
     client = pymongo.MongoClient(host=app.config['DB_HOST'], port=app.config['DB_PORT'])
-    db = client[app.config['DB_NAME']]
+
+    if use_shared_data:
+        db = client[app.config['DB_SHARED_NAME']]
+    else:
+        db = client[app.config['DB_NAME']]
+
     db.authenticate(app.config['DB_USER'], app.config['DB_PASS'])
     return db
 
