@@ -131,14 +131,14 @@ def parse_tabix_file_subset(tabix_filenames, subset_i, subset_n, record_parser):
 
 def load_base_coverage():
     def load_coverage(coverage_files, i, n):
-        db = connect_db()
+        db = connect_db(False)
         coverage_generator = parse_tabix_file_subset(coverage_files, i, n, get_base_coverage_from_file)
         try:
             db.base_coverage.insert(coverage_generator, w=0)
         except pymongo.errors.InvalidOperation:
             pass  # handle error when coverage_generator is empty
 
-    db = get_db()
+    db = get_db(False)
     db.base_coverage.drop()
     print("Dropped db.base_coverage")
     # load coverage first; variant info will depend on coverage
@@ -176,7 +176,7 @@ def load_variants_file():
         except pymongo.errors.InvalidOperation:
             pass  # handle error when variant_generator is empty
 
-    db = get_db()
+    db = get_db(False)
     db.variants.drop()
     print("Dropped db.variants")
 
@@ -206,7 +206,7 @@ def load_variants_file():
 
 
 def load_constraint_information():
-    db = get_db()
+    db = get_db(False)
 
     db.constraint.drop()
     print 'Dropped db.constraint.'
@@ -222,7 +222,7 @@ def load_constraint_information():
 
 
 def load_mnps():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
 
     db.variants.ensure_index('has_mnp')
@@ -241,7 +241,7 @@ def load_mnps():
 
 
 def load_gene_models():
-    db = get_db()
+    db = get_db(True)
 
     db.genes.drop()
     db.transcripts.drop()
@@ -356,7 +356,7 @@ def load_cnv_genes():
 
 
 def load_dbsnp_file():
-    db = get_db()
+    db = get_db(True)
 
     def load_dbsnp(dbsnp_file, i, n, db):
         if os.path.isfile(dbsnp_file + ".tbi"):
@@ -437,7 +437,7 @@ def create_cache():
     """
     # create autocomplete_entries.txt
     autocomplete_strings = []
-    for gene in get_db().genes.find():
+    for gene in get_db(True).genes.find():
         autocomplete_strings.append(gene['gene_name'])
         if 'other_names' in gene:
             autocomplete_strings.extend(gene['other_names'])
@@ -464,7 +464,7 @@ def create_cache():
 
 def precalculate_metrics():
     import numpy
-    db = get_db()
+    db = get_db(False)
     print 'Reading %s variants...' % db.variants.count()
     metrics = defaultdict(list)
     binned_metrics = defaultdict(list)
