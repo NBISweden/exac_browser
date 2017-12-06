@@ -13,8 +13,6 @@ SHARED DATA:
         Gene Models     db.genes                OMIM_FILE
         Gene Models     db.genes                DBNSFP_FILE
         Gene Models     db.genes                GENCODE_GTF
-        CNV Models      db.cnvs                 CNV_FILE
-        CNV Genes       db.cnvgenes             CNV_GENE_FILE
         DBSNP           db.dbsnp                DBSNP_FILE
 
 NON-SHARED DATA:
@@ -23,3 +21,5 @@ NON-SHARED DATA:
         Variants        db.variants             SITES_VCFS
         Constraints     db.constraints          CONSTRAINTS_FILE
         MNPs            db.variants             MNP_FILE
+        CNV Models      db.cnvs                 CNV_FILE
+        CNV Genes       db.cnvgenes             CNV_GENE_FILE

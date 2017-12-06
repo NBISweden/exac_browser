@@ -324,7 +324,7 @@ def load_gene_models():
 
 
 def load_cnv_models():
-    db = get_db()
+    db = get_db(False)
 
     db.cnvs.drop()
     print 'Dropped db.cnvs.'
@@ -339,12 +339,12 @@ def load_cnv_models():
     print 'Done loading CNVs. Took %s seconds' % int(time.time() - start_time)
 
 def drop_cnv_genes():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
     db.cnvgenes.drop()
 
 def load_cnv_genes():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
     with open(app.config['CNV_GENE_FILE']) as cnv_gene_file:
         for cnvgene in get_cnvs_per_gene(cnv_gene_file):
