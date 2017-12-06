@@ -8,6 +8,7 @@ single MongoDB instance.
         N A M E         C O L L E C T I O N             C O N F I G
 
 SHARED DATA:
+get_db(True)
 
         Gene Models     db.{genes,transcripts,exons}    CANONICAL_TRANSCRIPT_FILE
         Gene Models     db.{genes,transcripts,exons}    OMIM_FILE
@@ -16,6 +17,7 @@ SHARED DATA:
         DBSNP           db.dbsnp                        DBSNP_FILE
 
 NON-SHARED DATA:
+get_db(False)
 
         Base Coverage   db.base_coverage                BASE_COVERAGE_FILES
         Variants        db.variants                     SITES_VCFS
