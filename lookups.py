@@ -1,14 +1,17 @@
 import re
 from utils import *
+from exac import get_db
 
 SEARCH_LIMIT = 10000
 
 
 def get_gene(db, gene_id):
+    db = get_db(True)
     return db.genes.find_one({'gene_id': gene_id}, fields={'_id': False})
 
 
 def get_gene_by_name(db, gene_name):
+    db = get_db(True)
     # try gene_name field first
     gene = db.genes.find_one({'gene_name': gene_name}, fields={'_id': False})
     if gene:
@@ -18,6 +21,7 @@ def get_gene_by_name(db, gene_name):
 
 
 def get_transcript(db, transcript_id):
+    db = get_db(True)
     transcript = db.transcripts.find_one({'transcript_id': transcript_id}, fields={'_id': False})
     if not transcript:
         return None
@@ -26,6 +30,7 @@ def get_transcript(db, transcript_id):
 
 
 def get_raw_variant(db, xpos, ref, alt, get_id=False):
+    db = get_db(False)
     return db.variants.find_one({'xpos': xpos, 'ref': ref, 'alt': alt}, fields={'_id': get_id})
 
 
@@ -34,6 +39,7 @@ def get_variant(db, xpos, ref, alt):
     if variant is None or 'rsid' not in variant:
         return variant
     if variant['rsid'] == '.' or variant['rsid'] is None:
+        db = get_db(True)
         rsid = db.dbsnp.find_one({'xpos': xpos})
         if rsid:
             variant['rsid'] = 'rs%s' % rsid['rsid']
@@ -47,6 +53,7 @@ def get_variants_by_rsid(db, rsid):
         int(rsid.lstrip('rs'))
     except Exception, e:
         return None
+    db = get_db(False)
     variants = list(db.variants.find({'rsid': rsid}, fields={'_id': False}))
     add_consequence_to_variants(variants)
     return variants
@@ -59,8 +66,10 @@ def get_variants_from_dbsnp(db, rsid):
         rsid = int(rsid.lstrip('rs'))
     except Exception, e:
         return None
+    db = get_db(True)
     position = db.dbsnp.find_one({'rsid': rsid})
     if position:
+        db = get_db(False)
         variants = list(db.variants.find({'xpos': {'$lte': position['xpos'], '$gte': position['xpos']}}, fields={'_id': False}))
         if variants:
             add_consequence_to_variants(variants)
@@ -75,6 +84,7 @@ def get_coverage_for_bases(db, xstart, xstop=None):
     xstop can be None if just one base, but you'll still get back a list
     """
     if xstop is None:
+        db = get_db(False)
         xstop = xstart
     coverages = {
         doc['xpos']: doc for doc in db.base_coverage.find(
@@ -115,13 +125,16 @@ def get_coverage_for_transcript(db, xstart, xstop=None):
 
 
 def get_constraint_for_transcript(db, transcript):
+    db = get_db(False)
     return db.constraint.find_one({'transcript': transcript}, fields={'_id': False})
 
 
 def get_exons_cnvs(db, transcript_name):
+    db = get_db(False)
    return list(db.cnvs.find({'transcript': transcript_name}, fields={'_id': False}))
 
 def get_cnvs(db, gene_name):
+    db = get_db(False)
    return list(db.cnvgenes.find({'gene': gene_name}, fields={'_id': False}))
 
 
