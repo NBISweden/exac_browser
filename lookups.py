@@ -246,6 +246,7 @@ def get_genes_in_region(db, chrom, start, stop):
     """
     xstart = get_xpos(chrom, start)
     xstop = get_xpos(chrom, stop)
+    db = get_db(True)
     genes = db.genes.find({
         'xstart': {'$lte': xstop},
         'xstop': {'$gte': xstart},
@@ -260,6 +261,7 @@ def get_variants_in_region(db, chrom, start, stop):
     """
     xstart = get_xpos(chrom, start)
     xstop = get_xpos(chrom, stop)
+    db = get_db(False)
     variants = list(db.variants.find({
         'xpos': {'$lte': xstop, '$gte': xstart}
     }, fields={'_id': False}, limit=SEARCH_LIMIT))
@@ -273,6 +275,7 @@ def get_metrics(db, variant):
     if 'allele_count' not in variant or variant['allele_num'] == 0:
         return None
     metrics = {}
+    db = get_db(False)
     for metric in METRICS:
         metrics[metric] = db.metrics.find_one({'metric': metric}, fields={'_id': False})
 
@@ -308,6 +311,7 @@ def get_variants_in_gene(db, gene_id):
     """
     """
     variants = []
+    db = get_db(False)
     for variant in db.variants.find({'genes': gene_id}, fields={'_id': False}):
         variant['vep_annotations'] = [x for x in variant['vep_annotations'] if x['Gene'] == gene_id]
         add_consequence_to_variant(variant)
@@ -319,12 +323,14 @@ def get_variants_in_gene(db, gene_id):
 def get_transcripts_in_gene(db, gene_id):
     """
     """
+    db = get_db(True)
     return list(db.transcripts.find({'gene_id': gene_id}, fields={'_id': False}))
 
 
 def get_variants_in_transcript(db, transcript_id):
     """
     """
+    db = get_db(False)
     variants = []
     for variant in db.variants.find({'transcripts': transcript_id}, fields={'_id': False}):
         variant['vep_annotations'] = [x for x in variant['vep_annotations'] if x['Feature'] == transcript_id]
@@ -340,4 +346,5 @@ def get_exons_in_transcript(db, transcript_id):
     #      db.exons.find({'transcript_id': transcript_id}, fields={'_id': False})
     #      if x['feature_type'] != 'exon'],
     #     key=lambda k: k['start'])
+    db = get_db(True)
     return sorted(list(db.exons.find({'transcript_id': transcript_id, 'feature_type': { "$in": ['CDS', 'UTR', 'exon'] }}, fields={'_id': False})), key=lambda k: k['start'])
