@@ -25,3 +25,4 @@ get_db(False)
         MNPs            db.variants                     MNP_FILE
         CNV Models      db.cnvs                         CNV_FILE
         CNV Genes       db.cnvgenes                     CNV_GENE_FILE
+        Metrics         db.metrics                      (calculated)
