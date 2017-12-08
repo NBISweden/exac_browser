@@ -84,8 +84,9 @@ def get_coverage_for_bases(db, xstart, xstop=None):
     xstop can be None if just one base, but you'll still get back a list
     """
     if xstop is None:
-        db = get_db(False)
         xstop = xstart
+
+    db = get_db(False)
     coverages = {
         doc['xpos']: doc for doc in db.base_coverage.find(
             {'xpos': {'$gte': xstart, '$lte': xstop}},
