@@ -233,7 +233,7 @@ def load_mnps():
 
     with gzip.open(app.config['MNP_FILE']) as mnp_file:
         for mnp in get_mnp_data(mnp_file):
-            variant = lookups.get_raw_variant(db, mnp['xpos'], mnp['ref'], mnp['alt'], True)
+            variant = lookups.get_raw_variant(get_db(False), mnp['xpos'], mnp['ref'], mnp['alt'], True)
             db.variants.find_and_modify({'_id': variant['_id']}, {'$set': {'has_mnp': True}, '$push': {'mnps': mnp}}, w=0)
 
     db.variants.ensure_index('has_mnp')
@@ -564,9 +564,8 @@ def awesome_autocomplete(query):
 
 @app.route('/awesome')
 def awesome():
-    db = get_db()
     query = request.args.get('query')
-    datatype, identifier = lookups.get_awesomebar_result(db, query)
+    datatype, identifier = lookups.get_awesomebar_result(get_db(False),get_db(True), query)
 
     print "Searched for %s: %s" % (datatype, identifier)
     if datatype == 'gene':
@@ -589,13 +588,12 @@ def awesome():
 
 @app.route('/variant/<variant_str>')
 def variant_page(variant_str):
-    db = get_db()
     try:
         chrom, pos, ref, alt = variant_str.split('-')
         pos = int(pos)
         # pos, ref, alt = get_minimal_representation(pos, ref, alt)
         xpos = get_xpos(chrom, pos)
-        variant = lookups.get_variant(db, xpos, ref, alt)
+        variant = lookups.get_variant(get_db(False),get_db(True), xpos, ref, alt)
 
         if variant is None:
             variant = {
@@ -613,9 +611,9 @@ def variant_page(variant_str):
             for annotation in variant['vep_annotations']:
                 annotation['HGVS'] = get_proper_hgvs(annotation)
                 consequences.setdefault(annotation['major_consequence'], {}).setdefault(annotation['Gene'], []).append(annotation)
-        base_coverage = lookups.get_coverage_for_bases(db, xpos, xpos + len(ref) - 1)
+        base_coverage = lookups.get_coverage_for_bases(get_db(False), xpos, xpos + len(ref) - 1)
         any_covered = any([x['has_coverage'] for x in base_coverage])
-        metrics = lookups.get_metrics(db, variant)
+        metrics = lookups.get_metrics(get_db(False), variant)
 
         # check the appropriate sqlite db to get the *expected* number of
         # available bams and *actual* number of available bams for this variant
@@ -679,26 +677,25 @@ def gene_page(gene_id):
 
 
 def get_gene_page_content(gene_id):
-    db = get_db()
     try:
-        gene = lookups.get_gene(db, gene_id)
+        gene = lookups.get_gene(get_db(True), gene_id)
         if gene is None:
             abort(404)
         cache_key = 't-gene-{}'.format(gene_id)
         t = cache.get(cache_key)
         if t is None:
-            variants_in_gene = lookups.get_variants_in_gene(db, gene_id)
-            transcripts_in_gene = lookups.get_transcripts_in_gene(db, gene_id)
+            variants_in_gene = lookups.get_variants_in_gene(get_db(False), gene_id)
+            transcripts_in_gene = lookups.get_transcripts_in_gene(get_db(True), gene_id)
 
             # Get some canonical transcript and corresponding info
             transcript_id = gene['canonical_transcript']
-            transcript = lookups.get_transcript(db, transcript_id)
-            variants_in_transcript = lookups.get_variants_in_transcript(db, transcript_id)
-            cnvs_in_transcript = lookups.get_exons_cnvs(db, transcript_id)
-            cnvs_per_gene = lookups.get_cnvs(db, gene_id)
-            coverage_stats = lookups.get_coverage_for_transcript(db, transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
-            add_transcript_coordinate_to_variants(db, variants_in_transcript, transcript_id)
-            constraint_info = lookups.get_constraint_for_transcript(db, transcript_id)
+            transcript = lookups.get_transcript(get_db(True), transcript_id)
+            variants_in_transcript = lookups.get_variants_in_transcript(get_db(False), transcript_id)
+            cnvs_in_transcript = lookups.get_exons_cnvs(get_db(False), transcript_id)
+            cnvs_per_gene = lookups.get_cnvs(get_db(False), gene_id)
+            coverage_stats = lookups.get_coverage_for_transcript(get_db(False), transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
+            add_transcript_coordinate_to_variants(get_db(True), variants_in_transcript, transcript_id)
+            constraint_info = lookups.get_constraint_for_transcript(get_db(False), transcript_id)
 
             t = render_template(
                 'gene.html',
@@ -722,22 +719,21 @@ def get_gene_page_content(gene_id):
 
 @app.route('/transcript/<transcript_id>')
 def transcript_page(transcript_id):
-    db = get_db()
     try:
-        transcript = lookups.get_transcript(db, transcript_id)
+        transcript = lookups.get_transcript(get_db(True), transcript_id)
 
         cache_key = 't-transcript-{}'.format(transcript_id)
         t = cache.get(cache_key)
         if t is None:
 
-            gene = lookups.get_gene(db, transcript['gene_id'])
-            gene['transcripts'] = lookups.get_transcripts_in_gene(db, transcript['gene_id'])
-            variants_in_transcript = lookups.get_variants_in_transcript(db, transcript_id)
-            cnvs_in_transcript = lookups.get_exons_cnvs(db, transcript_id)
-            cnvs_per_gene = lookups.get_cnvs(db, transcript['gene_id'])
-            coverage_stats = lookups.get_coverage_for_transcript(db, transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
+            gene = lookups.get_gene(get_db(True), transcript['gene_id'])
+            gene['transcripts'] = lookups.get_transcripts_in_gene(get_db(True), transcript['gene_id'])
+            variants_in_transcript = lookups.get_variants_in_transcript(get_db(False), transcript_id)
+            cnvs_in_transcript = lookups.get_exons_cnvs(get_db(False), transcript_id)
+            cnvs_per_gene = lookups.get_cnvs(get_db(False), transcript['gene_id'])
+            coverage_stats = lookups.get_coverage_for_transcript(get_db(False), transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
 
-            add_transcript_coordinate_to_variants(db, variants_in_transcript, transcript_id)
+            add_transcript_coordinate_to_variants(get_db(True), variants_in_transcript, transcript_id)
 
             t = render_template(
                 'transcript.html',
@@ -790,11 +786,11 @@ def region_page(region_id):
             if start == stop:
                 start -= 20
                 stop += 20
-            genes_in_region = lookups.get_genes_in_region(db, chrom, start, stop)
-            variants_in_region = lookups.get_variants_in_region(db, chrom, start, stop)
+            genes_in_region = lookups.get_genes_in_region(get_db(True), chrom, start, stop)
+            variants_in_region = lookups.get_variants_in_region(get_db(False), chrom, start, stop)
             xstart = get_xpos(chrom, start)
             xstop = get_xpos(chrom, stop)
-            coverage_array = lookups.get_coverage_for_bases(db, xstart, xstop)
+            coverage_array = lookups.get_coverage_for_bases(get_db(False), xstart, xstop)
             t = render_template(
                 'region.html',
                 genes_in_region=genes_in_region,
@@ -885,11 +881,10 @@ def faq_page():
 
 @app.route('/text')
 def text_page():
-    db = get_db()
     query = request.args.get('text')
-    datatype, identifier = lookups.get_awesomebar_result(db, query)
+    datatype, identifier = lookups.get_awesomebar_result(get_db(False),get_db(True), query)
     if datatype in ['gene', 'transcript']:
-        gene = lookups.get_gene(db, identifier)
+        gene = lookups.get_gene(get_db(True), identifier)
         link = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr%(chrom)s%%3A%(start)s-%(stop)s" % gene
         output = '''Searched for %s. Found %s.
 %s; Canonical: %s.

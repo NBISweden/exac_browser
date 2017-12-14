@@ -1,46 +1,39 @@
 import re
 from utils import *
-from exac import get_db
 
 SEARCH_LIMIT = 10000
 
-
-def get_gene(db, gene_id):
-    db = get_db(True)
-    return db.genes.find_one({'gene_id': gene_id}, fields={'_id': False})
+def get_gene(sdb, gene_id):
+    return sdb.genes.find_one({'gene_id': gene_id}, fields={'_id': False})
 
 
-def get_gene_by_name(db, gene_name):
-    db = get_db(True)
+def get_gene_by_name(sdb, gene_name):
     # try gene_name field first
-    gene = db.genes.find_one({'gene_name': gene_name}, fields={'_id': False})
+    gene = sdb.genes.find_one({'gene_name': gene_name}, fields={'_id': False})
     if gene:
         return gene
     # if not, try gene['other_names']
-    return db.genes.find_one({'other_names': gene_name}, fields={'_id': False})
+    return sdb.genes.find_one({'other_names': gene_name}, fields={'_id': False})
 
 
-def get_transcript(db, transcript_id):
-    db = get_db(True)
-    transcript = db.transcripts.find_one({'transcript_id': transcript_id}, fields={'_id': False})
+def get_transcript(sdb, transcript_id):
+    transcript = sdb.transcripts.find_one({'transcript_id': transcript_id}, fields={'_id': False})
     if not transcript:
         return None
-    transcript['exons'] = get_exons_in_transcript(db, transcript_id)
+    transcript['exons'] = get_exons_in_transcript(sdb, transcript_id)
     return transcript
 
 
 def get_raw_variant(db, xpos, ref, alt, get_id=False):
-    db = get_db(False)
     return db.variants.find_one({'xpos': xpos, 'ref': ref, 'alt': alt}, fields={'_id': get_id})
 
 
-def get_variant(db, xpos, ref, alt):
+def get_variant(db, sdb, xpos, ref, alt):
     variant = get_raw_variant(db, xpos, ref, alt, False)
     if variant is None or 'rsid' not in variant:
         return variant
     if variant['rsid'] == '.' or variant['rsid'] is None:
-        db = get_db(True)
-        rsid = db.dbsnp.find_one({'xpos': xpos})
+        rsid = sdb.dbsnp.find_one({'xpos': xpos})
         if rsid:
             variant['rsid'] = 'rs%s' % rsid['rsid']
     return variant
@@ -53,23 +46,20 @@ def get_variants_by_rsid(db, rsid):
         int(rsid.lstrip('rs'))
     except Exception, e:
         return None
-    db = get_db(False)
     variants = list(db.variants.find({'rsid': rsid}, fields={'_id': False}))
     add_consequence_to_variants(variants)
     return variants
 
 
-def get_variants_from_dbsnp(db, rsid):
+def get_variants_from_dbsnp(db,sdb, rsid):
     if not rsid.startswith('rs'):
         return None
     try:
         rsid = int(rsid.lstrip('rs'))
     except Exception, e:
         return None
-    db = get_db(True)
-    position = db.dbsnp.find_one({'rsid': rsid})
+    position = sdb.dbsnp.find_one({'rsid': rsid})
     if position:
-        db = get_db(False)
         variants = list(db.variants.find({'xpos': {'$lte': position['xpos'], '$gte': position['xpos']}}, fields={'_id': False}))
         if variants:
             add_consequence_to_variants(variants)
@@ -86,7 +76,6 @@ def get_coverage_for_bases(db, xstart, xstop=None):
     if xstop is None:
         xstop = xstart
 
-    db = get_db(False)
     coverages = {
         doc['xpos']: doc for doc in db.base_coverage.find(
             {'xpos': {'$gte': xstart, '$lte': xstop}},
@@ -126,16 +115,14 @@ def get_coverage_for_transcript(db, xstart, xstop=None):
 
 
 def get_constraint_for_transcript(db, transcript):
-    db = get_db(False)
     return db.constraint.find_one({'transcript': transcript}, fields={'_id': False})
 
 
 def get_exons_cnvs(db, transcript_name):
-    db = get_db(False)
     return list(db.cnvs.find({'transcript': transcript_name}, fields={'_id': False}))
 
+
 def get_cnvs(db, gene_name):
-    db = get_db(False)
     return list(db.cnvgenes.find({'gene': gene_name}, fields={'_id': False}))
 
 
@@ -157,8 +144,7 @@ R3 = re.compile(r'^(\d+|X|Y|M|MT)$')
 # R4 = re.compile(r'^(\d+|X|Y|M|MT)\s*[-:]\s*(\d+)-([ATCG]+)-([ATCG]+)$')
 R4 = re.compile(r'^\s*(\d+|X|Y|M|MT)\s*[-:]\s*(\d+)[-:\s]*([ATCG]+)\s*[-:/]\s*([ATCG]+)\s*$')
 
-
-def get_awesomebar_result(db, query):
+def get_awesomebar_result(db,sdb query):
     """
     Similar to the above, but this is after a user types enter
     We need to figure out what they meant - could be gene, variant, region
@@ -190,31 +176,31 @@ def get_awesomebar_result(db, query):
             return 'variant', variant[0]['variant_id']
         else:
             return 'dbsnp_variant_set', variant[0]['rsid']
-    variant = get_variants_from_dbsnp(db, query.lower())
+    variant = get_variants_from_dbsnp(db,sdb, query.lower())
     if variant:
         return 'variant', variant[0]['variant_id']
     # variant = get_variant(db, )
     # TODO - https://github.com/brettpthomas/exac_browser/issues/14
 
-    gene = get_gene_by_name(db, query)
+    gene = get_gene_by_name(sdb, query)
     if gene:
         return 'gene', gene['gene_id']
 
     # From here out, all should be uppercase (gene, tx, region, variant_id)
     query = query.upper()
-    gene = get_gene_by_name(db, query)
+    gene = get_gene_by_name(sdb, query)
     if gene:
         return 'gene', gene['gene_id']
 
     # Ensembl formatted queries
     if query.startswith('ENS'):
         # Gene
-        gene = get_gene(db, query)
+        gene = get_gene(sdb, query)
         if gene:
             return 'gene', gene['gene_id']
 
         # Transcript
-        transcript = get_transcript(db, query)
+        transcript = get_transcript(sdb, query)
         if transcript:
             return 'transcript', transcript['transcript_id']
 
@@ -240,14 +226,13 @@ def get_awesomebar_result(db, query):
     return 'not_found', query
 
 
-def get_genes_in_region(db, chrom, start, stop):
+def get_genes_in_region(sdb, chrom, start, stop):
     """
     Genes that overlap a region
     """
     xstart = get_xpos(chrom, start)
     xstop = get_xpos(chrom, stop)
-    db = get_db(True)
-    genes = db.genes.find({
+    genes = sdb.genes.find({
         'xstart': {'$lte': xstop},
         'xstop': {'$gte': xstart},
     }, fields={'_id': False})
@@ -261,7 +246,6 @@ def get_variants_in_region(db, chrom, start, stop):
     """
     xstart = get_xpos(chrom, start)
     xstop = get_xpos(chrom, stop)
-    db = get_db(False)
     variants = list(db.variants.find({
         'xpos': {'$lte': xstop, '$gte': xstart}
     }, fields={'_id': False}, limit=SEARCH_LIMIT))
@@ -275,7 +259,6 @@ def get_metrics(db, variant):
     if 'allele_count' not in variant or variant['allele_num'] == 0:
         return None
     metrics = {}
-    db = get_db(False)
     for metric in METRICS:
         metrics[metric] = db.metrics.find_one({'metric': metric}, fields={'_id': False})
 
@@ -311,7 +294,6 @@ def get_variants_in_gene(db, gene_id):
     """
     """
     variants = []
-    db = get_db(False)
     for variant in db.variants.find({'genes': gene_id}, fields={'_id': False}):
         variant['vep_annotations'] = [x for x in variant['vep_annotations'] if x['Gene'] == gene_id]
         add_consequence_to_variant(variant)
@@ -319,18 +301,14 @@ def get_variants_in_gene(db, gene_id):
         variants.append(variant)
     return variants
 
-
-def get_transcripts_in_gene(db, gene_id):
+def get_transcripts_in_gene(sdb, gene_id):
     """
     """
-    db = get_db(True)
-    return list(db.transcripts.find({'gene_id': gene_id}, fields={'_id': False}))
-
+    return list(sdb.transcripts.find({'gene_id': gene_id}, fields={'_id': False}))
 
 def get_variants_in_transcript(db, transcript_id):
     """
     """
-    db = get_db(False)
     variants = []
     for variant in db.variants.find({'transcripts': transcript_id}, fields={'_id': False}):
         variant['vep_annotations'] = [x for x in variant['vep_annotations'] if x['Feature'] == transcript_id]
@@ -339,12 +317,11 @@ def get_variants_in_transcript(db, transcript_id):
         variants.append(variant)
     return variants
 
-
-def get_exons_in_transcript(db, transcript_id):
+def get_exons_in_transcript(sdb, transcript_id):
     # return sorted(
     #     [x for x in
     #      db.exons.find({'transcript_id': transcript_id}, fields={'_id': False})
     #      if x['feature_type'] != 'exon'],
     #     key=lambda k: k['start'])
     db = get_db(True)
-    return sorted(list(db.exons.find({'transcript_id': transcript_id, 'feature_type': { "$in": ['CDS', 'UTR', 'exon'] }}, fields={'_id': False})), key=lambda k: k['start'])
+    return sorted(list(sdb.exons.find({'transcript_id': transcript_id, 'feature_type': { "$in": ['CDS', 'UTR', 'exon'] }}, fields={'_id': False})), key=lambda k: k['start'])
