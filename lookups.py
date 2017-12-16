@@ -144,7 +144,7 @@ R3 = re.compile(r'^(\d+|X|Y|M|MT)$')
 # R4 = re.compile(r'^(\d+|X|Y|M|MT)\s*[-:]\s*(\d+)-([ATCG]+)-([ATCG]+)$')
 R4 = re.compile(r'^\s*(\d+|X|Y|M|MT)\s*[-:]\s*(\d+)[-:\s]*([ATCG]+)\s*[-:/]\s*([ATCG]+)\s*$')
 
-def get_awesomebar_result(db,sdb query):
+def get_awesomebar_result(db,sdb, query):
     """
     Similar to the above, but this is after a user types enter
     We need to figure out what they meant - could be gene, variant, region
