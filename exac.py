@@ -808,9 +808,8 @@ def region_page(region_id):
 
 @app.route('/dbsnp/<rsid>')
 def dbsnp_page(rsid):
-    db = get_db()
     try:
-        variants = lookups.get_variants_by_rsid(db, rsid)
+        variants = lookups.get_variants_by_rsid(get_db(False), rsid)
         chrom = None
         start = None
         stop = None
