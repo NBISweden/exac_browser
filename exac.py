@@ -760,7 +760,6 @@ def transcript_page(transcript_id):
 
 @app.route('/region/<region_id>')
 def region_page(region_id):
-    db = get_db()
     try:
         region = region_id.split('-')
         cache_key = 't-region-{}'.format(region_id)
