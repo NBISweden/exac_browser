@@ -45,12 +45,15 @@ MONGO_SETTINGS = json.load( open( MONGO_SETTINGS_FILE ) )
 
 REGION_LIMIT = 1E5
 EXON_PADDING = 50
+
 # Load default config and override config from an environment variable
+mongo_key = 'mongoDb-' + os.environ['FLASK_PORT']
+
 app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],
     DB_PORT=MONGO_SETTINGS['mongoPort'],
-    DB_NAME=MONGO_SETTINGS['mongoDb-' + os.environ['FLASK_PORT']],
-    DB_SHARED_NAME=MONGO_SETTINGS['mongoDb'],
+    DB_NAME=MONGO_SETTINGS[mongo_key]["db"],
+    DB_SHARED_NAME=MONGO_SETTINGS[mongo_key]["refdb"],
     DB_USER=MONGO_SETTINGS['mongoUser'],
     DB_PASS=MONGO_SETTINGS['mongoPassword'],
     DEBUG=True,
