@@ -473,7 +473,7 @@ def precalculate_metrics():
     binned_metrics = defaultdict(list)
     progress = 0
     start_time = time.time()
-    for variant in db.variants.find(fields=['quality_metrics', 'site_quality', 'allele_num', 'allele_count']):
+    for variant in db.variants.find(projection=['quality_metrics', 'site_quality', 'allele_num', 'allele_count']):
         for metric, value in variant['quality_metrics'].iteritems():
             metrics[metric].append(float(value))
         qual = float(variant['site_quality'])
