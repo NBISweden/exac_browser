@@ -137,7 +137,7 @@ def get_variants_from_sites_vcf(sites_vcf):
                 for x in POPS:
                     acs = float(info_field['AC_%s' % x].split(',')[i])
                     ans = float(info_field['AN_%s' % x])
-                    variant['pop_freq'][x] = acs/ans
+                    variant['pop_freq'][POPS[x]] = acs/ans
 
                 #variant['ac_male'] = info_field['AC_MALE']
                 #variant['ac_female'] = info_field['AC_FEMALE']
