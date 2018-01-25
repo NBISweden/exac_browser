@@ -117,12 +117,14 @@ def get_variants_from_sites_vcf(sites_vcf):
                 if not variant['allele_count'] and variant['filter'] == 'PASS': variant['filter'] = 'AC_Adj0' # Temporary filter
                 variant['allele_num'] = int(info_field['AN_Adj'])
 
-                if float(info_field['AF']) > 0:
-                    variant['allele_freq'] = float(info_field['AF'])
-                elif variant['allele_num'] > 0:
-                    variant['allele_freq'] = variant['allele_count']/float(info_field['AN_Adj'])
+                if 'AF' in info_field:
+                    if variant['allele_num'] > 0:
+                        variant['allele_freq'] = variant['allele_count']/float(info_field['AN_Adj'])
+                    else:
+                        variant['allele_freq'] = None
                 else:
                     variant['allele_freq'] = None
+
 
                 variant['pop_acs'] = dict([(POPS[x], int(info_field['AC_%s' % x].split(',')[i])) for x in POPS])
                 variant['pop_ans'] = dict([(POPS[x], int(info_field['AN_%s' % x])) for x in POPS])
