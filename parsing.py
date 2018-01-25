@@ -127,6 +127,16 @@ def get_variants_from_sites_vcf(sites_vcf):
                 variant['pop_acs'] = dict([(POPS[x], int(info_field['AC_%s' % x].split(',')[i])) for x in POPS])
                 variant['pop_ans'] = dict([(POPS[x], int(info_field['AN_%s' % x])) for x in POPS])
                 variant['pop_homs'] = dict([(POPS[x], int(info_field['Hom_%s' % x].split(',')[i])) for x in POPS])
+
+                # Calculate population frequencies here and store them
+                # rather than doing it in the HTML template.
+                variant['pop_freq'] = {}
+
+                for x in POPS:
+                    acs = float(info_field['AC_%s' % x].split(',')[i]
+                    ans = float(info_field['AN_%s' % x])
+                    variant['pop_freq'][x] = acs/ans
+
                 #variant['ac_male'] = info_field['AC_MALE']
                 #variant['ac_female'] = info_field['AC_FEMALE']
                 #variant['an_male'] = info_field['AN_MALE']

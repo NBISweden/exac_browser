@@ -366,8 +366,8 @@
                                             {% if chrom == 'X' or chrom == 'Y' %}
                                                 <td>{{ variant.pop_hemis[pop] }}</td>
                                             {% endif %}
-                                            {% if variant.pop_ans[pop] > 0 %}
-                                                <td>{{ '%0.4g' % (variant.pop_acs[pop]/variant.pop_ans[pop]) }}</td>
+                                            {% if variant.pop_freq[pop] > 0 %}
+                                                <td>{{ '%0.4g' % variant.pop_freq[pop] }}</td>
                                             {% else %}
                                                 <td>NA</td>
                                             {% endif %}
