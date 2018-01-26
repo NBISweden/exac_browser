@@ -134,10 +134,13 @@ def get_variants_from_sites_vcf(sites_vcf):
                 # rather than doing it in the HTML template.
                 variant['pop_freq'] = {}
 
-                for x in POPS:
-                    acs = float(info_field['AC_%s' % x].split(',')[i])
-                    ans = float(info_field['AN_%s' % x])
-                    variant['pop_freq'][POPS[x]] = acs/ans
+                if 'AF' in info_fields:
+                    for x in POPS:
+                        acs = float(info_field['AC_%s' % x].split(',')[i])
+                        ans = float(info_field['AN_%s' % x])
+                        variant['pop_freq'][POPS[x]] = acs/ans
+                else:
+                    variant['pop_freq'] = None
 
                 #variant['ac_male'] = info_field['AC_MALE']
                 #variant['ac_female'] = info_field['AC_FEMALE']
