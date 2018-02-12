@@ -94,22 +94,45 @@ collection:
 
 	This activates the Python vitual environment.
 
-2.	FLASK_PORT=8000 python manage.py load_variants_file | tee out.log
+2.	FLASK_PORT=<number> python manage.py load_variants_file | tee out.log
+
+	Do update the port number (e.g. "FLASK_PORT=9876") to
+	the appropriate number.  This should correspond to the
+	"mongodb-<number>.db" collection name in "settings.conf".
+	FAILING TO SPECIFY THE CORRECT NUMBER IS FATAL (it will delete
+	data if an existing collection exists).
 
 	This loads the VCF file into the collection associated with
-	the "mongodb-8000.db" container in the "settings.conf" file.
-	The output is logged to the terminal as well as to the file
-	"out.log".  Consult this log file to make sure the loading
+	the "mongodb-<number>.db" container in the "settings.conf"
+	file.  The output is logged to the terminal as well as to the
+	file "out.log".  Consult this log file to make sure the loading
 	finished without errors before proceeding (there should be
 	one line saying "Finished" for each loading thread, this goes
 	for all data loading steps).  If errors occured, they may be
 	transient, and retrying will drop the previously loaded data and
 	load it again.
 
-3.	FLASK_PORT=8000 python manage.py load_base_coverage | tee out.log
+3.	FLASK_PORT=<number> python manage.py load_base_coverage | tee out.log
 
-	This loads the base coverage files.
+	This loads the base coverage files.  The log file "out.log" will
+	be overwritten.
 
 The dataset is now loaded.
 
+
+--------------------------------------------------------------------------------
+Preparing and loading a reference dataset:
+
+By "reference dataset" is meant the genes, transcripts, etc. that are
+not part of a specific SweFreq dataset but annotated on the relevant
+reference assembly and that may be shared between datasets. dbSNP and
+similar datasets also belong in this category.
+
+The reference datasets are:
+
+1.	GENCODE
+2.	dbSNP
+3.	dbNSFP
+4.	Ensembl canonical transcripts
+5.	OMIM
 
