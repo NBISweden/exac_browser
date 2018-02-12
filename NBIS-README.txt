@@ -38,8 +38,8 @@ collection used is determined by two things:
 	The number in the key corresponds to the value of the FLASK_PORT
 	environment variable, the "db" value refers to the MongoDB
 	collection that contains the variation and coverage data for
-	the browesr instance (the data specific to a dataset), and the
-	"refdb" value refers to the MongDB collection holding the genes
+	the browser instance (the data specific to a dataset), and the
+	"refdb" value refers to the MongoDB collection holding the genes
 	etc. for the reference dataset used.  Several dataset may share
 	the same "refdb" setting.
 
@@ -92,7 +92,7 @@ collection:
 
 1.	source exac_venv/bin/activate
 
-	This activates the Python vitual environment.
+	This activates the Python virtual environment.
 
 2.	FLASK_PORT=<number> python manage.py load_variants_file | tee out.log
 
@@ -106,9 +106,9 @@ collection:
 	the "mongodb-<number>.db" container in the "settings.conf"
 	file.  The output is logged to the terminal as well as to the
 	file "out.log".  Consult this log file to make sure the loading
-	finished without errors before proceeding (there should be
-	one line saying "Finished" for each loading thread, this goes
-	for all data loading steps).  If errors occured, they may be
+	finished without errors before proceeding (there should be one
+	line saying "Finished" for each loading thread, this goes for
+	all data loading steps).  If there were errors, they may be
 	transient, and retrying will drop the previously loaded data and
 	load it again.
 
@@ -135,4 +135,41 @@ The reference datasets are:
 3.	dbNSFP
 4.	Ensembl canonical transcripts
 5.	OMIM
+
+We currently have a GRChg37 and a GRChg38 verison of each set of data
+in the two collections "exac-common-GRChg37" and "exac-common-GRChg38"
+respectively.
+
+When fetching datasets, it may be a good idea to work in an empty
+directory which you then fill up with data for a particular human
+reference genome, just so that data files for different assemblies are
+not accidentally mixed up.
+
+Each dataset will need its own particular handling and I will mention
+each in order, first for the GRChg37 genome, and then for GRChg38
+immediately following that.
+
+Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
+
+	curl -o gencode.gtf.gz \
+		ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+
+	Remove all lines that does not start with "#" (comments)
+	or "chr".  This gets rid of the "GL" chromosome data which
+	otherwise causes issues when loading.
+
+	zgrep -E '^(#|chr)' gencode.gtf.gz |
+	gzip -c >gencode-filtered.gtf.gz
+
+	mv gencode-filtered.gtf.gz gencode.gtf.gz
+
+Fetching and preparing GENCODE (GENCODE v27, GRChg38.p10):
+
+	curl -o gencode.gtf.gz \
+		ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
+
+	I have not made any notes about filtering this dataset in the
+	same way as the GRChg37 dataset (above).  It is possibly not
+	needed, or if it is, it is done in the identical way as for
+	GRChg37.
 
