@@ -151,6 +151,7 @@ immediately following that.  The reference datasets for one assimbly
 should be picked to be on as similar versions of the assembly as
 possible.
 
+
 Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
 
     curl -o gencode-orig.gtf.gz \
@@ -163,6 +164,7 @@ Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
     zgrep -E '^(#|chr)' gencode-orig.gtf.gz |
     gzip -c >gencode.gtf.gz
 
+
 Fetching and preparing GENCODE (GENCODE v27, GRChg38.p10):
 
     curl -o gencode-orig.gtf.gz \
@@ -174,6 +176,7 @@ Fetching and preparing GENCODE (GENCODE v27, GRChg38.p10):
 
     ln -s gencode-orig.gtf.gz gencode.gtf.gz
 
+
 Fetching and preparing dbSNP (dbSNP b150, GRCh37.p13):
 
     curl -o dbSNP-orig.txt.gz \
@@ -183,6 +186,7 @@ Fetching and preparing dbSNP (dbSNP b150, GRCh37.p13):
     sort --parallel=8 -S 256M -k2,2 -k3,3n | bgzip -c >dbSNP.txt.bgz
 
     tabix -s 2 -b 3 -e 3 dbSNP.txt.bgz
+
 
 Fetching and preparing dbSNP (dbSNP b150, GRCh38.p7)
 
@@ -194,7 +198,8 @@ Fetching and preparing dbSNP (dbSNP b150, GRCh38.p7)
 
     tabix -s 2 -b 3 -e 3 dbSNP.txt.bgz
 
-Fetching and preparing dbNSFP (dbNSFP v2.9.3, GRCh37)
+
+Fetching and preparing dbNSFP (dbNSFP v2.9.3, GRCh37):
 
     This is a 13.4 GB Zip-file that is really slow to download. Out of
     it, we need to get a single 26MB file (sigh).
@@ -206,7 +211,8 @@ Fetching and preparing dbNSFP (dbNSFP v2.9.3, GRCh37)
     gzip -9 dbNSFP2.9_gene
     mv dbNSFP_gene.gz
 
-Fetching and preparing dbNSFP (dbNSFP v3.5a GRCh38 (.p2?))
+
+Fetching and preparing dbNSFP (dbNSFP v3.5a, GRCh38(.p2?)):
 
     Again, this is a 16.1 GB Zip-file that is really slow to download.
 
@@ -217,3 +223,23 @@ Fetching and preparing dbNSFP (dbNSFP v3.5a GRCh38 (.p2?))
     gzip -9 dbNSFP3.5_gene
     mv dbNSFP3.5_gene.gz dbNSFP_gene.gz
 
+
+Fetching and preparing Ensembl canonical transcripts (Ensembl 75, GRCh37.p13):
+
+    mysql -BN -h ensembldb.ensembl.org -u anonymous -D homo_sapiens_core_75_37 \
+        -e 'SELECT g.stable_id, t.stable_id FROM gene g JOIN transcript t
+            ON (g.canonical_transcript_id = t.transcript_id)' |
+    sort | gzip -9c >canonical_transcripts.txt.gz
+
+
+Fetching and preparing Ensembl canonical transcripts (Ensembl 90, GRCh38.p10):
+
+    mysql -BN -h ensembldb.ensembl.org -u anonymous -D homo_sapiens_core_90_38 \
+        -e 'SELECT g.stable_id, t.stable_id FROM gene g JOIN transcript t
+            ON (g.canonical_transcript_id = t.transcript_id)' |
+    sort | gzip -9c >canonical_transcripts.txt.gz
+
+
+Regarding OMIM:
+
+    Using old dataset (still GRChg37?). Update requires registration.
