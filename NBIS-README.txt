@@ -1,7 +1,11 @@
+Old documentation:
+
 Additional index needs to be added for the Beacon to work smoothly:
 
     db.variants.createIndex({'chrom':1, 'pos': 1})
 
+
+New documentation:
 
 ================================================================================
 Preparing and loading data:
@@ -9,9 +13,10 @@ Preparing and loading data:
 Some of this document echoes the ExAC browser's README.md, but has local
 modifications.
 
-The data will be loaded into MongoDB instance on swefreq-db from the
-command line.  The process is not automated due to its tendency to
-sometimes die half-way.
+The data will be loaded into MongoDB instance in the LXD container
+specified in the "settings.conf" file.  Loading of datasets happens
+manually from the command line.  The process is not automated due to its
+tendency to sometimes die half-way.
 
 
 --------------------------------------------------------------------------------
@@ -28,7 +33,11 @@ collection used is determined by two things:
     FLASK_PORT=8000.  Not setting this environment variable will cause
     the browser (or data loading script) to fail immediately.
 
-2.  The settings.json file has entries like
+2.  The "settings.json" file has entries like
+
+    "mongoHost": "swefreq-db",
+
+    which specifies what LXD container to use, and
 
     "mongoDb-8000": {
         "db": "exac-swegen-GRChg37",
@@ -80,9 +89,10 @@ bgzip.
 
 These files should be placed in the directory "exac_data" beneath the
 "swefreq-browser" directory (the directory which is a clone of the
-"swefreq-browser" GitHub repository).  The "exac_data" directory, or
-the files and directories in that directory may also be provided using
-symbolic links, if that helps organising data files.
+"swefreq-browser" GitHub repository and properly set up to include
+the needed software).  The "exac_data" directory, or the files and
+directories in that directory may also be provided using symbolic links,
+if that helps organising data files.
 
 Assuming that the "swefreq-browser" directory has been properly set up
 with regards to the Python virtual environment (see "README.md"), the
@@ -131,14 +141,28 @@ similar datasets also belong in this category.
 The reference datasets are:
 
 1.  GENCODE
+    Filename: gencode.gtf.gz
+
 2.  dbSNP
+    Filename: dbSNP.txt.bgz and dbSNP.txt.bgz.tbi
+
 3.  dbNSFP
+    Filename: dbNSFP_gene.gz
+
 4.  Ensembl canonical transcripts
+    Filename: canonical_transcripts.txt.gz
+
 5.  OMIM
+    Filename: omim_info.txt.gz
+
+The filenames mentioned above are the ones that the data loading script
+expects to find in the "exac_data" directory under "swegen-browser".
+These may be supplied by symbolic links if that makes data management
+easier.
 
 We currently have a GRChg37 and a GRChg38 verison of each set of data
-in the two collections "exac-common-GRChg37" and "exac-common-GRChg38"
-respectively.
+in the two collections,"exac-common-GRChg37" and "exac-common-GRChg38"
+respectively, in the "swefreq-db" container.
 
 When fetching datasets, it may be a good idea to work in an empty
 directory which you then fill up with data for a particular human
@@ -209,7 +233,7 @@ Fetching and preparing dbNSFP (dbNSFP v2.9.3, GRCh37):
 
     unzip dbNSFP-orig.zip dbNSFP2.9_gene
     gzip -9 dbNSFP2.9_gene
-    mv dbNSFP_gene.gz
+    mv dbNSFP2.9_gene.gz dbNSFP_gene.gz
 
 
 Fetching and preparing dbNSFP (dbNSFP v3.5a, GRCh38(.p2?)):
@@ -242,4 +266,5 @@ Fetching and preparing Ensembl canonical transcripts (Ensembl 90, GRCh38.p10):
 
 Regarding OMIM:
 
-    Using old dataset (still GRChg37?). Update requires registration.
+    Using old dataset (still GRChg37?).  Update seems to require
+    registration.
