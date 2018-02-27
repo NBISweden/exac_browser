@@ -1,5 +1,6 @@
 Old documentation:
 
+
 Additional index needs to be added for the Beacon to work smoothly:
 
     db.variants.createIndex({'chrom':1, 'pos': 1})
@@ -7,11 +8,14 @@ Additional index needs to be added for the Beacon to work smoothly:
 
 New documentation:
 
+
 ================================================================================
 Preparing and loading data:
 
-Some of this document echoes the ExAC browser's README.md, but has local
-modifications.
+Some of this document echoes the ExAC browser's README.md, but has
+local modifications.  The README.md document also assumes only a single
+dataset (ExAC), which does not reflect our current use of this browser
+code.
 
 The data will be loaded into MongoDB instance in the LXD container
 specified in the "settings.conf" file.  Loading of datasets happens
@@ -20,10 +24,22 @@ tendency to sometimes die half-way.
 
 
 --------------------------------------------------------------------------------
+Reference data and dataset-specific data:
+
+Reference data refers to data not provided by a variation dataset
+provider.  This is data on a reference genome such as gene and
+transcripts.
+
+Dataset-specific data refers to the variations provided by a dataset
+provider.
+
+
+--------------------------------------------------------------------------------
 Support for multiple datasets in SweFreq:
 
-Each dataset uses a different collection in the MongoDB database. The
-collection used is determined by two things:
+Each dataset uses a different collection in the MongoDB database for
+storing its dataset-specific data. The collection used is determined by
+two things:
 
 1.  The FLASK_PORT environment variable. This is an environment variable
     that needs to be set before the browser is started or before the
@@ -37,7 +53,9 @@ collection used is determined by two things:
 
     "mongoHost": "swefreq-db",
 
-    which specifies what LXD container to use, and
+    which specifies what LXD container to use for the MongoDB database
+    that the SweFreq browser uses ("swefreq-db" is the "live database
+    container"), and
 
     "mongoDb-8000": {
         "db": "exac-swegen-GRChg37",
@@ -53,7 +71,7 @@ collection used is determined by two things:
 
 
 --------------------------------------------------------------------------------
-Preparing and loading a dataset:
+Preparing a dataset:
 
 For information about fetching and loading a reference dataset, see next
 section.
@@ -69,6 +87,10 @@ A dataset consists of
 
 4.  Tabix index files for each individual coverage file
     ("coverage/Panel.*.coverage.txt.gz.tbi").
+
+The filenames mentioned are the ones that the data loading script
+expects to find in the "exac_data" directory under the main
+"swefreq-browser" directory.
 
 The Tabix index for the main VCF file is created (unless already
 provided) using
@@ -87,12 +109,15 @@ using
 The coverage files, like the VCF file, must have been compressed using
 bgzip.
 
-These files should be placed in the directory "exac_data" beneath the
-"swefreq-browser" directory (the directory which is a clone of the
-"swefreq-browser" GitHub repository and properly set up to include
-the needed software).  The "exac_data" directory, or the files and
-directories in that directory may also be provided using symbolic links,
-if that helps organising data files.
+These files should be placed in the directory "exac_data" beneath
+the "swefreq-browser" directory (the directory which is a clone of
+the "swefreq-browser" GitHub repository and that has previously been
+properly set up to include the needed software).  The "exac_data"
+directory, or the files and directories in that directory may also be
+provided using symbolic links, if that helps organising data files.
+
+--------------------------------------------------------------------------------
+Loading a dataset:
 
 Assuming that the "swefreq-browser" directory has been properly set up
 with regards to the Python virtual environment (see "README.md"), the
