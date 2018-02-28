@@ -116,6 +116,7 @@ properly set up to include the needed software).  The "exac_data"
 directory, or the files and directories in that directory may also be
 provided using symbolic links, if that helps organising data files.
 
+
 --------------------------------------------------------------------------------
 Loading a dataset:
 
@@ -137,15 +138,14 @@ collection:
     FAILING TO SPECIFY THE CORRECT NUMBER IS FATAL
     (it will delete data if an existing collection exists).
 
-    This loads the VCF file into the collection associated with
-    the "mongodb-<number>.db" container in the "settings.conf"
-    file.  The output is logged to the terminal as well as to the
-    file "out.log".  Consult this log file to make sure the loading
-    finished without errors before proceeding (there should be one
-    line saying "Finished" for each loading thread, this goes for
-    all data loading steps).  If there were errors, they may be
-    transient, and retrying will drop the previously loaded data and
-    load it again.
+    This loads the VCF file into the collection associated with the
+    "mongodb-<number>.db" setting in the "settings.conf" file.  The
+    output is logged to the terminal as well as to the file "out.log".
+    Consult this log file to make sure the loading finished without
+    errors before proceeding (there should be one line saying "Finished"
+    for each loading thread, this goes for all data loading steps).  If
+    there were errors, they may be transient, and retrying will drop the
+    previously loaded data and load it again.
 
 3.  FLASK_PORT=<number> python manage.py load_base_coverage | tee out.log
 
