@@ -134,7 +134,7 @@ def get_variants_from_sites_vcf(sites_vcf):
                 # rather than doing it in the HTML template.
                 variant['pop_freq'] = {}
 
-                if 'AF' in info_fields:
+                if 'AF' in info_field:
                     for x in POPS:
                         acs = float(info_field['AC_%s' % x].split(',')[i])
                         ans = float(info_field['AN_%s' % x])
