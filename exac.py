@@ -86,7 +86,7 @@ def connect_db(use_shared_data=False):
     """
     Connects to the specific database.
     """
-    client = pymongo.MongoClient(host=app.config['DB_HOST'], port=app.config['DB_PORT'])
+    client = pymongo.MongoClient(connect=False, host=app.config['DB_HOST'], port=app.config['DB_PORT'])
 
     if use_shared_data:
         db = client[app.config['DB_SHARED_NAME']]
