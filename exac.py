@@ -45,11 +45,15 @@ MONGO_SETTINGS = json.load( open( MONGO_SETTINGS_FILE ) )
 
 REGION_LIMIT = 1E5
 EXON_PADDING = 50
+
 # Load default config and override config from an environment variable
+mongo_key = 'mongoDb-' + os.environ['FLASK_PORT']
+
 app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],
     DB_PORT=MONGO_SETTINGS['mongoPort'],
-    DB_NAME=MONGO_SETTINGS['mongoDb-' + os.environ['FLASK_PORT']],
+    DB_NAME=MONGO_SETTINGS[mongo_key]["db"],
+    DB_SHARED_NAME=MONGO_SETTINGS[mongo_key]["refdb"],
     DB_USER=MONGO_SETTINGS['mongoUser'],
     DB_PASS=MONGO_SETTINGS['mongoPassword'],
     DEBUG=True,
@@ -78,12 +82,17 @@ app.config.update(dict(
 GENE_CACHE_DIR = os.path.join(os.path.dirname(__file__), 'gene_cache')
 GENES_TO_CACHE = {l.strip('\n') for l in open(os.path.join(os.path.dirname(__file__), 'genes_to_cache.txt'))}
 
-def connect_db():
+def connect_db(use_shared_data=False):
     """
     Connects to the specific database.
     """
-    client = pymongo.MongoClient(host=app.config['DB_HOST'], port=app.config['DB_PORT'])
-    db = client[app.config['DB_NAME']]
+    client = pymongo.MongoClient(connect=False, host=app.config['DB_HOST'], port=app.config['DB_PORT'])
+
+    if use_shared_data:
+        db = client[app.config['DB_SHARED_NAME']]
+    else:
+        db = client[app.config['DB_NAME']]
+
     db.authenticate(app.config['DB_USER'], app.config['DB_PASS'])
     return db
 
@@ -125,14 +134,14 @@ def parse_tabix_file_subset(tabix_filenames, subset_i, subset_n, record_parser):
 
 def load_base_coverage():
     def load_coverage(coverage_files, i, n):
-        db = connect_db()
+        db = connect_db(False)
         coverage_generator = parse_tabix_file_subset(coverage_files, i, n, get_base_coverage_from_file)
         try:
-            db.base_coverage.insert(coverage_generator, w=0)
+            db.base_coverage.insert(coverage_generator, w=1)
         except pymongo.errors.InvalidOperation:
             pass  # handle error when coverage_generator is empty
 
-    db = get_db()
+    db = get_db(False)
     db.base_coverage.drop()
     print("Dropped db.base_coverage")
     # load coverage first; variant info will depend on coverage
@@ -166,11 +175,11 @@ def load_variants_file():
     def load_variants(sites_file, i, n, db):
         variants_generator = parse_tabix_file_subset([sites_file], i, n, get_variants_from_sites_vcf)
         try:
-            db.variants.insert(variants_generator, w=0)
+            db.variants.insert(variants_generator, w=1)
         except pymongo.errors.InvalidOperation:
             pass  # handle error when variant_generator is empty
 
-    db = get_db()
+    db = get_db(False)
     db.variants.drop()
     print("Dropped db.variants")
 
@@ -200,7 +209,7 @@ def load_variants_file():
 
 
 def load_constraint_information():
-    db = get_db()
+    db = get_db(False)
 
     db.constraint.drop()
     print 'Dropped db.constraint.'
@@ -209,14 +218,14 @@ def load_constraint_information():
 
     with gzip.open(app.config['CONSTRAINT_FILE']) as constraint_file:
         for transcript in get_constraint_information(constraint_file):
-            db.constraint.insert(transcript, w=0)
+            db.constraint.insert(transcript, w=1)
 
     db.constraint.ensure_index('transcript')
     print 'Done loading constraint info. Took %s seconds' % int(time.time() - start_time)
 
 
 def load_mnps():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
 
     db.variants.ensure_index('has_mnp')
@@ -227,15 +236,15 @@ def load_mnps():
 
     with gzip.open(app.config['MNP_FILE']) as mnp_file:
         for mnp in get_mnp_data(mnp_file):
-            variant = lookups.get_raw_variant(db, mnp['xpos'], mnp['ref'], mnp['alt'], True)
-            db.variants.find_and_modify({'_id': variant['_id']}, {'$set': {'has_mnp': True}, '$push': {'mnps': mnp}}, w=0)
+            variant = lookups.get_raw_variant(get_db(False), mnp['xpos'], mnp['ref'], mnp['alt'], True)
+            db.variants.find_and_modify({'_id': variant['_id']}, {'$set': {'has_mnp': True}, '$push': {'mnps': mnp}}, w=1)
 
     db.variants.ensure_index('has_mnp')
     print 'Done loading MNP info. Took %s seconds' % int(time.time() - start_time)
 
 
 def load_gene_models():
-    db = get_db()
+    db = get_db(True)
 
     db.genes.drop()
     db.transcripts.drop()
@@ -278,7 +287,7 @@ def load_gene_models():
             if gene_id in dbnsfp_info:
                 gene['full_gene_name'] = dbnsfp_info[gene_id][0]
                 gene['other_names'] = dbnsfp_info[gene_id][1]
-            db.genes.insert(gene, w=0)
+            db.genes.insert(gene, w=1)
 
     print 'Done loading genes. Took %s seconds' % int(time.time() - start_time)
 
@@ -294,7 +303,7 @@ def load_gene_models():
     # and now transcripts
     start_time = time.time()
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
-        db.transcripts.insert((transcript for transcript in get_transcripts_from_gencode_gtf(gtf_file)), w=0)
+        db.transcripts.insert((transcript for transcript in get_transcripts_from_gencode_gtf(gtf_file)), w=1)
     print 'Done loading transcripts. Took %s seconds' % int(time.time() - start_time)
 
     start_time = time.time()
@@ -305,7 +314,7 @@ def load_gene_models():
     # Building up gene definitions
     start_time = time.time()
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
-        db.exons.insert((exon for exon in get_exons_from_gencode_gtf(gtf_file)), w=0)
+        db.exons.insert((exon for exon in get_exons_from_gencode_gtf(gtf_file)), w=1)
     print 'Done loading exons. Took %s seconds' % int(time.time() - start_time)
 
     start_time = time.time()
@@ -318,7 +327,7 @@ def load_gene_models():
 
 
 def load_cnv_models():
-    db = get_db()
+    db = get_db(False)
 
     db.cnvs.drop()
     print 'Dropped db.cnvs.'
@@ -326,23 +335,23 @@ def load_cnv_models():
     start_time = time.time()
     with open(app.config['CNV_FILE']) as cnv_txt_file:
         for cnv in get_cnvs_from_txt(cnv_txt_file):
-            db.cnvs.insert(cnv, w=0)
+            db.cnvs.insert(cnv, w=1)
             #progress.update(gtf_file.fileobj.tell())
         #progress.finish()
 
     print 'Done loading CNVs. Took %s seconds' % int(time.time() - start_time)
 
 def drop_cnv_genes():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
     db.cnvgenes.drop()
 
 def load_cnv_genes():
-    db = get_db()
+    db = get_db(False)
     start_time = time.time()
     with open(app.config['CNV_GENE_FILE']) as cnv_gene_file:
         for cnvgene in get_cnvs_per_gene(cnv_gene_file):
-            db.cnvgenes.insert(cnvgene, w=0)
+            db.cnvgenes.insert(cnvgene, w=1)
             #progress.update(gtf_file.fileobj.tell())
         #progress.finish()
 
@@ -350,19 +359,19 @@ def load_cnv_genes():
 
 
 def load_dbsnp_file():
-    db = get_db()
+    db = get_db(True)
 
     def load_dbsnp(dbsnp_file, i, n, db):
         if os.path.isfile(dbsnp_file + ".tbi"):
             dbsnp_record_generator = parse_tabix_file_subset([dbsnp_file], i, n, get_snp_from_dbsnp_file)
             try:
-                db.dbsnp.insert(dbsnp_record_generator, w=0)
+                db.dbsnp.insert(dbsnp_record_generator, w=1)
             except pymongo.errors.InvalidOperation:
                 pass  # handle error when coverage_generator is empty
 
         else:
             with gzip.open(dbsnp_file) as f:
-                db.dbsnp.insert((snp for snp in get_snp_from_dbsnp_file(f)), w=0)
+                db.dbsnp.insert((snp for snp in get_snp_from_dbsnp_file(f)), w=1)
 
     db.dbsnp.drop()
     db.dbsnp.ensure_index('rsid')
@@ -431,7 +440,7 @@ def create_cache():
     """
     # create autocomplete_entries.txt
     autocomplete_strings = []
-    for gene in get_db().genes.find():
+    for gene in get_db(True).genes.find():
         autocomplete_strings.append(gene['gene_name'])
         if 'other_names' in gene:
             autocomplete_strings.extend(gene['other_names'])
@@ -458,13 +467,13 @@ def create_cache():
 
 def precalculate_metrics():
     import numpy
-    db = get_db()
+    db = get_db(False)
     print 'Reading %s variants...' % db.variants.count()
     metrics = defaultdict(list)
     binned_metrics = defaultdict(list)
     progress = 0
     start_time = time.time()
-    for variant in db.variants.find(fields=['quality_metrics', 'site_quality', 'allele_num', 'allele_count']):
+    for variant in db.variants.find(projection=['quality_metrics', 'site_quality', 'allele_num', 'allele_count']):
         for metric, value in variant['quality_metrics'].iteritems():
             metrics[metric].append(float(value))
         qual = float(variant['site_quality'])
@@ -519,14 +528,21 @@ def precalculate_metrics():
     print 'Done pre-calculating metrics!'
 
 
-def get_db():
+def get_db(use_shared_data=False):
     """
     Opens a new database connection if there is none yet for the
     current application context.
     """
-    if not hasattr(g, 'db_conn'):
-        g.db_conn = connect_db()
-    return g.db_conn
+    if use_shared_data:
+        if not hasattr(g, 'db_conn_shared'):
+            g.db_conn_shared = connect_db(use_shared_data)
+        conn = g.db_conn_shared
+    else:
+        if not hasattr(g, 'db_conn'):
+            g.db_conn = connect_db(use_shared_data)
+        conn = g.db_conn
+
+    return conn
 
 
 # @app.teardown_appcontext
@@ -551,9 +567,8 @@ def awesome_autocomplete(query):
 
 @app.route('/awesome')
 def awesome():
-    db = get_db()
     query = request.args.get('query')
-    datatype, identifier = lookups.get_awesomebar_result(db, query)
+    datatype, identifier = lookups.get_awesomebar_result(get_db(False),get_db(True), query)
 
     print "Searched for %s: %s" % (datatype, identifier)
     if datatype == 'gene':
@@ -576,13 +591,12 @@ def awesome():
 
 @app.route('/variant/<variant_str>')
 def variant_page(variant_str):
-    db = get_db()
     try:
         chrom, pos, ref, alt = variant_str.split('-')
         pos = int(pos)
         # pos, ref, alt = get_minimal_representation(pos, ref, alt)
         xpos = get_xpos(chrom, pos)
-        variant = lookups.get_variant(db, xpos, ref, alt)
+        variant = lookups.get_variant(get_db(False),get_db(True), xpos, ref, alt)
 
         if variant is None:
             variant = {
@@ -600,9 +614,9 @@ def variant_page(variant_str):
             for annotation in variant['vep_annotations']:
                 annotation['HGVS'] = get_proper_hgvs(annotation)
                 consequences.setdefault(annotation['major_consequence'], {}).setdefault(annotation['Gene'], []).append(annotation)
-        base_coverage = lookups.get_coverage_for_bases(db, xpos, xpos + len(ref) - 1)
+        base_coverage = lookups.get_coverage_for_bases(get_db(False), xpos, xpos + len(ref) - 1)
         any_covered = any([x['has_coverage'] for x in base_coverage])
-        metrics = lookups.get_metrics(db, variant)
+        metrics = lookups.get_metrics(get_db(False), variant)
 
         # check the appropriate sqlite db to get the *expected* number of
         # available bams and *actual* number of available bams for this variant
@@ -666,26 +680,25 @@ def gene_page(gene_id):
 
 
 def get_gene_page_content(gene_id):
-    db = get_db()
     try:
-        gene = lookups.get_gene(db, gene_id)
+        gene = lookups.get_gene(get_db(True), gene_id)
         if gene is None:
             abort(404)
         cache_key = 't-gene-{}'.format(gene_id)
         t = cache.get(cache_key)
         if t is None:
-            variants_in_gene = lookups.get_variants_in_gene(db, gene_id)
-            transcripts_in_gene = lookups.get_transcripts_in_gene(db, gene_id)
+            variants_in_gene = lookups.get_variants_in_gene(get_db(False), gene_id)
+            transcripts_in_gene = lookups.get_transcripts_in_gene(get_db(True), gene_id)
 
             # Get some canonical transcript and corresponding info
             transcript_id = gene['canonical_transcript']
-            transcript = lookups.get_transcript(db, transcript_id)
-            variants_in_transcript = lookups.get_variants_in_transcript(db, transcript_id)
-            cnvs_in_transcript = lookups.get_exons_cnvs(db, transcript_id)
-            cnvs_per_gene = lookups.get_cnvs(db, gene_id)
-            coverage_stats = lookups.get_coverage_for_transcript(db, transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
-            add_transcript_coordinate_to_variants(db, variants_in_transcript, transcript_id)
-            constraint_info = lookups.get_constraint_for_transcript(db, transcript_id)
+            transcript = lookups.get_transcript(get_db(True), transcript_id)
+            variants_in_transcript = lookups.get_variants_in_transcript(get_db(False), transcript_id)
+            cnvs_in_transcript = lookups.get_exons_cnvs(get_db(False), transcript_id)
+            cnvs_per_gene = lookups.get_cnvs(get_db(False), gene_id)
+            coverage_stats = lookups.get_coverage_for_transcript(get_db(False), transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
+            add_transcript_coordinate_to_variants(get_db(True), variants_in_transcript, transcript_id)
+            constraint_info = lookups.get_constraint_for_transcript(get_db(False), transcript_id)
 
             t = render_template(
                 'gene.html',
@@ -709,22 +722,21 @@ def get_gene_page_content(gene_id):
 
 @app.route('/transcript/<transcript_id>')
 def transcript_page(transcript_id):
-    db = get_db()
     try:
-        transcript = lookups.get_transcript(db, transcript_id)
+        transcript = lookups.get_transcript(get_db(True), transcript_id)
 
         cache_key = 't-transcript-{}'.format(transcript_id)
         t = cache.get(cache_key)
         if t is None:
 
-            gene = lookups.get_gene(db, transcript['gene_id'])
-            gene['transcripts'] = lookups.get_transcripts_in_gene(db, transcript['gene_id'])
-            variants_in_transcript = lookups.get_variants_in_transcript(db, transcript_id)
-            cnvs_in_transcript = lookups.get_exons_cnvs(db, transcript_id)
-            cnvs_per_gene = lookups.get_cnvs(db, transcript['gene_id'])
-            coverage_stats = lookups.get_coverage_for_transcript(db, transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
+            gene = lookups.get_gene(get_db(True), transcript['gene_id'])
+            gene['transcripts'] = lookups.get_transcripts_in_gene(get_db(True), transcript['gene_id'])
+            variants_in_transcript = lookups.get_variants_in_transcript(get_db(False), transcript_id)
+            cnvs_in_transcript = lookups.get_exons_cnvs(get_db(False), transcript_id)
+            cnvs_per_gene = lookups.get_cnvs(get_db(False), transcript['gene_id'])
+            coverage_stats = lookups.get_coverage_for_transcript(get_db(False), transcript['xstart'] - EXON_PADDING, transcript['xstop'] + EXON_PADDING)
 
-            add_transcript_coordinate_to_variants(db, variants_in_transcript, transcript_id)
+            add_transcript_coordinate_to_variants(get_db(True), variants_in_transcript, transcript_id)
 
             t = render_template(
                 'transcript.html',
@@ -751,7 +763,6 @@ def transcript_page(transcript_id):
 
 @app.route('/region/<region_id>')
 def region_page(region_id):
-    db = get_db()
     try:
         region = region_id.split('-')
         cache_key = 't-region-{}'.format(region_id)
@@ -777,11 +788,11 @@ def region_page(region_id):
             if start == stop:
                 start -= 20
                 stop += 20
-            genes_in_region = lookups.get_genes_in_region(db, chrom, start, stop)
-            variants_in_region = lookups.get_variants_in_region(db, chrom, start, stop)
+            genes_in_region = lookups.get_genes_in_region(get_db(True), chrom, start, stop)
+            variants_in_region = lookups.get_variants_in_region(get_db(False), chrom, start, stop)
             xstart = get_xpos(chrom, start)
             xstop = get_xpos(chrom, stop)
-            coverage_array = lookups.get_coverage_for_bases(db, xstart, xstop)
+            coverage_array = lookups.get_coverage_for_bases(get_db(False), xstart, xstop)
             t = render_template(
                 'region.html',
                 genes_in_region=genes_in_region,
@@ -800,9 +811,8 @@ def region_page(region_id):
 
 @app.route('/dbsnp/<rsid>')
 def dbsnp_page(rsid):
-    db = get_db()
     try:
-        variants = lookups.get_variants_by_rsid(db, rsid)
+        variants = lookups.get_variants_by_rsid(get_db(False), rsid)
         chrom = None
         start = None
         stop = None
@@ -872,11 +882,10 @@ def faq_page():
 
 @app.route('/text')
 def text_page():
-    db = get_db()
     query = request.args.get('text')
-    datatype, identifier = lookups.get_awesomebar_result(db, query)
+    datatype, identifier = lookups.get_awesomebar_result(get_db(False),get_db(True), query)
     if datatype in ['gene', 'transcript']:
-        gene = lookups.get_gene(db, identifier)
+        gene = lookups.get_gene(get_db(True), identifier)
         link = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr%(chrom)s%%3A%(start)s-%(stop)s" % gene
         output = '''Searched for %s. Found %s.
 %s; Canonical: %s.
