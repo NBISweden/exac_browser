@@ -117,14 +117,31 @@ def get_variants_from_sites_vcf(sites_vcf):
                 if not variant['allele_count'] and variant['filter'] == 'PASS': variant['filter'] = 'AC_Adj0' # Temporary filter
                 variant['allele_num'] = int(info_field['AN_Adj'])
 
-                if variant['allele_num'] > 0:
-                    variant['allele_freq'] = variant['allele_count']/float(info_field['AN_Adj'])
+                if 'AF' in info_field:
+                    if variant['allele_num'] > 0:
+                        variant['allele_freq'] = variant['allele_count']/float(info_field['AN_Adj'])
+                    else:
+                        variant['allele_freq'] = None
                 else:
                     variant['allele_freq'] = None
+
 
                 variant['pop_acs'] = dict([(POPS[x], int(info_field['AC_%s' % x].split(',')[i])) for x in POPS])
                 variant['pop_ans'] = dict([(POPS[x], int(info_field['AN_%s' % x])) for x in POPS])
                 variant['pop_homs'] = dict([(POPS[x], int(info_field['Hom_%s' % x].split(',')[i])) for x in POPS])
+
+                # Calculate population frequencies here and store them
+                # rather than doing it in the HTML template.
+                variant['pop_freq'] = {}
+
+                if 'AF' in info_field:
+                    for x in POPS:
+                        acs = float(info_field['AC_%s' % x].split(',')[i])
+                        ans = float(info_field['AN_%s' % x])
+                        variant['pop_freq'][POPS[x]] = acs/ans
+                else:
+                    variant['pop_freq'][POPS[x]] = None
+
                 #variant['ac_male'] = info_field['AC_MALE']
                 #variant['ac_female'] = info_field['AC_FEMALE']
                 #variant['an_male'] = info_field['AN_MALE']
