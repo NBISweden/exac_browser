@@ -88,12 +88,14 @@ def connect_db(use_shared_data=False):
     """
     client = pymongo.MongoClient(connect=False, host=app.config['DB_HOST'], port=app.config['DB_PORT'])
 
+    auth_db = client['exac-user']
+    auth_db.authenticate(app.config['DB_USER'], app.config['DB_PASS'])
+
     if use_shared_data:
         db = client[app.config['DB_SHARED_NAME']]
     else:
         db = client[app.config['DB_NAME']]
 
-    db.authenticate(app.config['DB_USER'], app.config['DB_PASS'])
     return db
 
 def parse_tabix_file_subset(tabix_filenames, subset_i, subset_n, record_parser):
