@@ -4,12 +4,9 @@ import os
 import pymongo
 import pysam
 import gzip
-from parsing import *
 import logging
-import lookups
 import random
 import sys
-from utils import *
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify, send_from_directory
 from flask.ext.compress import Compress
@@ -26,14 +23,22 @@ import sqlite3
 import traceback
 import time
 
+# local imports
+import lookups
+from parsing import *
+from utils import *
+
 logging.getLogger().addHandler(logging.StreamHandler())
 logging.getLogger().setLevel(logging.INFO)
 
 ADMINISTRATORS = (
     'exac.browser.errors@gmail.com',
 )
+TEMPLATE_DIR = "../frontend/templates/"
+STATIC_FOLDER = "../frontend/static"
 
-app = Flask(__name__)
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_FOLDER)
 mail_on_500(app, ADMINISTRATORS)
 Compress(app)
 app.config['COMPRESS_DEBUG'] = True
@@ -47,7 +52,7 @@ REGION_LIMIT = 1E5
 EXON_PADDING = 50
 
 # Load default config and override config from an environment variable
-mongo_key = 'mongoDb-' + os.environ['FLASK_PORT']
+mongo_key = 'mongoDb-' + str(os.environ.get('FLASK_PORT', 5000))
 
 app.config.update(dict(
     DB_HOST=MONGO_SETTINGS['mongoHost'],

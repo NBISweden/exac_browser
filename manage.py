@@ -1,6 +1,8 @@
+#!/usr/bin/env python2.7
+
 from flask.ext.script import Manager
-from exac import app
-import exac
+from backend.exac import app
+import backend.exac
 
 manager = Manager(app)
 
