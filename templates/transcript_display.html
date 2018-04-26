@@ -646,6 +646,9 @@ function refresh_links() {
 
 /* Re add fake data points that were removed on the server  */
 function expand_the_coverage_stats(data) {
+    if (data.length == 0) {
+        return data;
+    }
     var out_data = [];
     out_data.push(data[0]);
     console.log("Expand coverage stats");
