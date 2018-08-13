@@ -26,3 +26,32 @@ It is required that the dataset has been annotated with the Ensembl
 Variant Effect Predictor (VEP) tool.  This annotation pipeline is
 avaliable for local installation from
 https://www.ensembl.org/info/docs/tools/vep
+
+
+------------------------------------------------------------------------
+VCF data fields used by the loading script.
+
+
+The VCF file loader will explicitly ignore chromosomes GL and MT.
+
+For each allele, it will use and compute
+
+        allele_count    = AC_Adj
+        allele_num      = AN_Adj
+        allele_freq     = allele_count / AN_Adj
+
+For each (hard-coded) population, it will will use and compute
+
+        pop_acs         = AC_*  (* = population abbreviation)
+        pop_ans         = AN_*
+        pop_homs        = Hom_*
+        pop_freq        = AC_* / AN_*
+
+        hom_count       = sum(pop_homs)
+
+Only on X and Y:
+
+        pop_hemis       = Hemi_*
+        hemi_count      = sum(pop_hemis)
+
+It also uses PD_HIST and GQ_HIST for genotype depth and genotype qualities.
