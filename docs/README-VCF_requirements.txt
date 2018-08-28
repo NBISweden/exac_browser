@@ -18,8 +18,8 @@ fields that is required by VCF 4.0, 4.1 or 4.2.  These are
 
 See e.g. http://samtools.github.io/hts-specs/VCFv4.2.pdf
 
-Files in the Ensembl format similar to VCF (six columns) are not
-supported, neither are files in any other format.
+Files in the Ensembl format similar to VCF (but with only six columns)
+are not supported, neither are files in any other format.
 
 
 It is required that the dataset has been annotated with the Ensembl
@@ -35,6 +35,8 @@ VCF data fields used by the loading script.
 The VCF file loader will explicitly ignore chromosomes GL and MT.
 
 For each allele, it will use and compute
+
+        Python variable   VCF fields used (and operation)
 
         allele_count    = AC_Adj
         allele_num      = AN_Adj
