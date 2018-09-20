@@ -1,7 +1,7 @@
-# Extracts the VCF headers and all variants with an allele frequency (AF
-# field) larger than the value given on the command line.  The uncompressed
-# VCF data is read from standard input, and the result is and written to
-# standard output.
+# Extracts the VCF headers and all variants with an allele frequency
+# (AF field) larger than the value given on the command line.  The
+# uncompressed VCF data is read from standard input, and the result is
+# and written to standard output.
 
 # Example usage (extracts variants with AF > 0.01):
 #
@@ -26,9 +26,10 @@ BEGIN   { FS = "\t" }
                 # the left hand side of the equal sign is "AF"
                 if (split(a[i], b, "=") == 2 && b[1] == "AF") {
                         # The AF field may contain a comma-delimited
-                        # list of values.  We will extract this variant if
-                        # any of these values are greater than the given
-                        # threshold value (given to us in "f").
+                        # list of values.  We will extract this variant
+                        # if any of these values are greater than the
+                        # given threshold value (given to us in "f" on
+                        # the command line).
                         nn = split(b[2], c, ",")
                         for (j = 1; j <= nn && !found; ++j)
                                 if (c[j] > f) found = 1
