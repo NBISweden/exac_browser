@@ -196,7 +196,7 @@ not accidentally mixed up.
 
 Each dataset will need its own particular handling and I will mention
 each in order, first for the GRChg37 genome, and then for GRChg38
-immediately following that.  The reference datasets for one assimbly
+immediately following that.  The reference datasets for one assembly
 should be picked to be on as similar versions of the assembly as
 possible.
 
