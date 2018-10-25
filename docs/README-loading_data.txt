@@ -214,7 +214,7 @@ in "settings.conf".
 Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
 
     curl -o gencode-orig.gtf.gz \
-        ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+        ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
 
     Remove all lines that does not start with "#" (comments) or "chr".
     This gets rid of the "GL" and "MT" chromosome data which otherwise
@@ -227,7 +227,7 @@ Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
 Fetching and preparing GENCODE (GENCODE v27, GRChg38.p10):
 
     curl -o gencode-orig.gtf.gz \
-        ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
+        ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
 
     I have not made any notes about filtering this dataset in the same
     way as the GRChg37 dataset (above).  It is possibly not needed, or
