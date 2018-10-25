@@ -27,27 +27,27 @@ tendency to sometimes die half-way.
 Reference data and dataset-specific data:
 
 Reference data refers to data not provided by a variation dataset
-provider.  This is data on a reference genome such as gene and
+provider.  This is data on a reference genome such as genes and
 transcripts.
 
-Dataset-specific data refers to the variations provided by a dataset
-provider.
+Dataset-specific data refers to the variations and coverage data
+provided by a dataset provider.
 
 
 --------------------------------------------------------------------------------
 Support for multiple datasets in SweFreq:
 
 Each dataset uses a different collection in the MongoDB database for
-storing its dataset-specific data. The collection used is determined by
+storing its dataset-specific data.  The collection used is determined by
 two things:
 
-1.  The FLASK_PORT environment variable. This is an environment variable
-    that needs to be set before the browser is started or before the
-    data is loaded.  It should be set to a port number greater than
-    or equal to 5000 (an arbitrarily picked number).  Whenever we
-    re-import the *SweGen* dataset, that dataset should be loaded with
-    FLASK_PORT=8000.  Not setting this environment variable will cause
-    the browser (or data loading script) to fail immediately.
+1.  The FLASK_PORT environment variable.  This is an environment
+    variable that needs to be set before the browser is started or
+    before the data is loaded.  It should be set to a port number
+    greater than or equal to 5000 (an arbitrarily picked number).
+    Whenever we re-import the *SweGen* dataset, that dataset should be
+    loaded with FLASK_PORT=8000.  Not setting this environment variable
+    will cause the browser (or data loading script) to fail immediately.
 
 2.  The "settings.json" file has entries like
 
@@ -83,7 +83,7 @@ A dataset consists of
 2.  its associated Tabix index ("variations.vcf.gz.tbi"),
 
 3.  a subdirectory ("coverage") of coverage files
-    ("Panel.*.coverage.txt.gz"), and
+    ("coverage/Panel.*.coverage.txt.gz"), and
 
 4.  Tabix index files for each individual coverage file
     ("coverage/Panel.*.coverage.txt.gz.tbi").
@@ -207,8 +207,8 @@ Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
         ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
 
     Remove all lines that does not start with "#" (comments) or "chr".
-    This gets rid of the "GL" chromosome data which otherwise causes
-    issues when loading.
+    This gets rid of the "GL" and "MT" chromosome data which otherwise
+    causes issues when loading.
 
     zgrep -E '^(#|chr)' gencode-orig.gtf.gz |
     gzip -c >gencode.gtf.gz
