@@ -200,6 +200,16 @@ immediately following that.  The reference datasets for one assembly
 should be picked to be on as similar versions of the assembly as
 possible.
 
+Once the reference data is prepared in the "exac_data" directory, it is
+loaded using
+
+    FLASK_PORT=<number> python manage.py load_dbsnp_file
+    FLASK_PORT=<number> python manage.py load_gene_models
+
+Here, the FLASK_PORT value will make the code pick out the MongoDB
+collection name from the corresponding "mongoDb-<number>.refdb" setting
+in "settings.conf".
+
 
 Fetching and preparing GENCODE (GENCODE v19, GRChg37.p13):
 
