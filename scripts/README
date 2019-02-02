@@ -1,0 +1,4 @@
+Note that these scripts are *not* general purpose scripts.  They
+were written to process very specific sets of data under particular
+circumstances.  They need to be read and understood, and quite likely
+modified, before use.
